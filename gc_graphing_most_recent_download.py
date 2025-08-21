@@ -197,55 +197,55 @@ fig.suptitle('CO2 and PAR in Both Chambers')
 fig.tight_layout()
 st.pyplot(fig)
 
-# # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/co2_par_zoomed_in_{current_date}{additional_file_info}.png'
-# # if save_figure == True:
-#   # plt.savefig(fig_name)
+# fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/co2_par_zoomed_in_{current_date}{additional_file_info}.png'
+# if save_figure == True:
+  # plt.savefig(fig_name)
 
-# # Graphing all variables with PAR. Not zoomed in
+# Graphing all variables with PAR. Not zoomed in
 
-# variables = ['CO2','RH','Temp']
-# for var in variables:
+variables = ['CO2','RH','Temp']
+for var in variables:
   
-#   plt.clf()
-#   fig, axes = plt.subplots(2,1, figsize=(8,6))
-#   # var_low_bound_lowc = 350
-#   # var_up_bound_lowc = 900
-#   # var_low_bound_hic = 350
-#   # var_up_bound_hic = 900
-#   # ax1.set_ylim(var_low_bound_hic, var_up_bound_hic)
-#   # ax3.set_ylim(var_low_bound_lowc, var_up_bound_lowc)
-#   ax1 = axes[0]
-#   ax1.plot(data_a['minute'], data_a[var], 'b-', label=var)
-#   ax1.set_ylabel(var, color = 'b')
-#   ax1.tick_params(axis='y', labelcolor='b')
-#   ax2=ax1.twinx()
-#   ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
-#   ax2.set_ylabel('PAR', color = 'r')
-#   ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
-#   ax2.set_ylim(0,1500)
-#   ax3 = axes[1]
-#   ax3.plot(data_b['minute'], data_b[var], 'b-', label = var)
-#   ax3.set_ylabel(var, color = 'b')
-#   ax3.set_xlabel('date')
-#   ax3.tick_params(axis='y', labelcolor = 'b')
-#   ax4 = ax3.twinx()
-#   ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
-#   ax4.set_ylabel('PAR', color = 'r')
-#   ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
-#   ax4.set_ylim(0,1500)
-#   date_format = mdates.DateFormatter('%m/%d')
-#   for ax in axes:
-#     ax.xaxis.set_major_formatter(date_format)
-#     axes[0].set_title(f'{var} Elevated CO2 Chamber (HiC)')
-#     axes[1].set_title(f'{var} Ambient CO2 Chamber (LowC)')
-#     fig.suptitle(f'{var} and PAR in Both Chambers')
-#     # axes[0].set_ylim(650, 750)
-#     # axes[1].set_ylim(400, 500)
-#   fig.tight_layout()
-#   st.pyplot(fig)
-#   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_par_{current_date}{additional_file_info}.png'
-#   # if save_figure == True:
-#     # plt.savefig(fig_name)
+  plt.clf()
+  fig, axes = plt.subplots(2,1, figsize=(8,6))
+  # var_low_bound_lowc = 350
+  # var_up_bound_lowc = 900
+  # var_low_bound_hic = 350
+  # var_up_bound_hic = 900
+  # ax1.set_ylim(var_low_bound_hic, var_up_bound_hic)
+  # ax3.set_ylim(var_low_bound_lowc, var_up_bound_lowc)
+  ax1 = axes[0]
+  ax1.plot(data_a['minute'], data_a[var], 'b-', label=var)
+  ax1.set_ylabel(var, color = 'b')
+  ax1.tick_params(axis='y', labelcolor='b')
+  ax2=ax1.twinx()
+  ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
+  ax2.set_ylabel('PAR', color = 'r')
+  ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
+  ax2.set_ylim(0,1500)
+  ax3 = axes[1]
+  ax3.plot(data_b['minute'], data_b[var], 'b-', label = var)
+  ax3.set_ylabel(var, color = 'b')
+  ax3.set_xlabel('date')
+  ax3.tick_params(axis='y', labelcolor = 'b')
+  ax4 = ax3.twinx()
+  ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
+  ax4.set_ylabel('PAR', color = 'r')
+  ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
+  ax4.set_ylim(0,1500)
+  date_format = mdates.DateFormatter('%m/%d')
+  for ax in axes:
+    ax.xaxis.set_major_formatter(date_format)
+    axes[0].set_title(f'{var} Elevated CO2 Chamber (HiC)')
+    axes[1].set_title(f'{var} Ambient CO2 Chamber (LowC)')
+    fig.suptitle(f'{var} and PAR in Both Chambers')
+    # axes[0].set_ylim(650, 750)
+    # axes[1].set_ylim(400, 500)
+  fig.tight_layout()
+  st.pyplot(fig)
+  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_par_{current_date}{additional_file_info}.png'
+  # if save_figure == True:
+    # plt.savefig(fig_name)
   
 
 # # SP and actual conditionals comparison
