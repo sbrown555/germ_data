@@ -294,7 +294,6 @@ date_low_limit = pd.to_datetime('2025-05-01')
 date_upper_limit = pd.to_datetime('2025-08-08')
 date_format = mdates.DateFormatter('%m/%d')
 for var in variables:
-  plt.clf()
   fig, axes = plt.subplots(2,1)
   for actual_sp, group in data_total[data_total['Chamber'] == 'A'].groupby('actual_sp'):
     axes[0].plot(group['minute'], group[var], label = actual_sp)
@@ -315,6 +314,8 @@ for var in variables:
   # if save_figure == True:
   #   plt.savefig(fig_name)
   st.pyplot(fig)
+  plt.clf()
+
 
 
 # # Creating dataframe of difference between chambers (A - B) and graphing the difference
@@ -341,7 +342,6 @@ for var in variables:
 # date_upper_limit = pd.to_datetime('2025-08-08')
 # date_format = mdates.DateFormatter('%m/%d')
 # for var in variables:
-#   plt.clf()
 #   fig, ax = plt.subplots(1,1)
 #   for chamber, group in diff_sp.groupby('Chamber'):
 #     ax.plot(group['minute'], group[var], label = chamber)
@@ -354,6 +354,7 @@ for var in variables:
 #   # if save_figure == True:
 #   #   plt.savefig(fig_name)
 #   st.pyplot(fig)
+#   plt.clf()
 
 
 # # Creating a dataframe of the difference between actual and setpoint (a - sp) and graphing for each chamber.
@@ -384,7 +385,6 @@ for var in variables:
 # # plt.show()
 
 # for var in variables:
-#   plt.clf()
 #   fig, axes = plt.subplots(1,1)
 #   for actual_sp, group in diff_total.groupby('actual_sp'):
 #     axes.plot(group['minute'], group[var], label = actual_sp)
@@ -396,4 +396,5 @@ for var in variables:
 #   # fig_name=f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between_chambers_{var}_{current_date}{additional_file_info}.png'
 #   # if save_figure == True:
 #   #   plt.savefig(fig_name)
-  
+#   plt.clf()
+
