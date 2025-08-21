@@ -22,7 +22,7 @@ gauth = GoogleAuth()
 gauth.settings = {
     'client_config_backend': 'service',
     'service_config': {
-        'client_json_file_path': SERVICE_ACCOUNT_JSON,
+        'client_json': sa_info,
         'client_user_email': client_email
     },
     'oauth_scope': ['https://www.googleapis.com/auth/drive']
