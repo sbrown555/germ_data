@@ -197,203 +197,203 @@ fig.suptitle('CO2 and PAR in Both Chambers')
 fig.tight_layout()
 st.pyplot(fig)
 
-# fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/co2_par_zoomed_in_{current_date}{additional_file_info}.png'
-# if save_figure == True:
-  # plt.savefig(fig_name)
+# # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/co2_par_zoomed_in_{current_date}{additional_file_info}.png'
+# # if save_figure == True:
+#   # plt.savefig(fig_name)
 
-# Graphing all variables with PAR. Not zoomed in
+# # Graphing all variables with PAR. Not zoomed in
 
-variables = ['CO2','RH','Temp']
-for var in variables:
+# variables = ['CO2','RH','Temp']
+# for var in variables:
   
-  plt.clf()
-  fig, axes = plt.subplots(2,1, figsize=(8,6))
-  # var_low_bound_lowc = 350
-  # var_up_bound_lowc = 900
-  # var_low_bound_hic = 350
-  # var_up_bound_hic = 900
-  # ax1.set_ylim(var_low_bound_hic, var_up_bound_hic)
-  # ax3.set_ylim(var_low_bound_lowc, var_up_bound_lowc)
-  ax1 = axes[0]
-  ax1.plot(data_a['minute'], data_a[var], 'b-', label=var)
-  ax1.set_ylabel(var, color = 'b')
-  ax1.tick_params(axis='y', labelcolor='b')
-  ax2=ax1.twinx()
-  ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
-  ax2.set_ylabel('PAR', color = 'r')
-  ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
-  ax2.set_ylim(0,1500)
-  ax3 = axes[1]
-  ax3.plot(data_b['minute'], data_b[var], 'b-', label = var)
-  ax3.set_ylabel(var, color = 'b')
-  ax3.set_xlabel('date')
-  ax3.tick_params(axis='y', labelcolor = 'b')
-  ax4 = ax3.twinx()
-  ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
-  ax4.set_ylabel('PAR', color = 'r')
-  ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
-  ax4.set_ylim(0,1500)
-  date_format = mdates.DateFormatter('%m/%d')
-  for ax in axes:
-    ax.xaxis.set_major_formatter(date_format)
-    axes[0].set_title(f'{var} Elevated CO2 Chamber (HiC)')
-    axes[1].set_title(f'{var} Ambient CO2 Chamber (LowC)')
-    fig.suptitle(f'{var} and PAR in Both Chambers')
-    # axes[0].set_ylim(650, 750)
-    # axes[1].set_ylim(400, 500)
-  fig.tight_layout()
-  st.pyplot(fig)
-  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_par_{current_date}{additional_file_info}.png'
-  # if save_figure == True:
-    # plt.savefig(fig_name)
+#   plt.clf()
+#   fig, axes = plt.subplots(2,1, figsize=(8,6))
+#   # var_low_bound_lowc = 350
+#   # var_up_bound_lowc = 900
+#   # var_low_bound_hic = 350
+#   # var_up_bound_hic = 900
+#   # ax1.set_ylim(var_low_bound_hic, var_up_bound_hic)
+#   # ax3.set_ylim(var_low_bound_lowc, var_up_bound_lowc)
+#   ax1 = axes[0]
+#   ax1.plot(data_a['minute'], data_a[var], 'b-', label=var)
+#   ax1.set_ylabel(var, color = 'b')
+#   ax1.tick_params(axis='y', labelcolor='b')
+#   ax2=ax1.twinx()
+#   ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
+#   ax2.set_ylabel('PAR', color = 'r')
+#   ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
+#   ax2.set_ylim(0,1500)
+#   ax3 = axes[1]
+#   ax3.plot(data_b['minute'], data_b[var], 'b-', label = var)
+#   ax3.set_ylabel(var, color = 'b')
+#   ax3.set_xlabel('date')
+#   ax3.tick_params(axis='y', labelcolor = 'b')
+#   ax4 = ax3.twinx()
+#   ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
+#   ax4.set_ylabel('PAR', color = 'r')
+#   ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
+#   ax4.set_ylim(0,1500)
+#   date_format = mdates.DateFormatter('%m/%d')
+#   for ax in axes:
+#     ax.xaxis.set_major_formatter(date_format)
+#     axes[0].set_title(f'{var} Elevated CO2 Chamber (HiC)')
+#     axes[1].set_title(f'{var} Ambient CO2 Chamber (LowC)')
+#     fig.suptitle(f'{var} and PAR in Both Chambers')
+#     # axes[0].set_ylim(650, 750)
+#     # axes[1].set_ylim(400, 500)
+#   fig.tight_layout()
+#   st.pyplot(fig)
+#   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_par_{current_date}{additional_file_info}.png'
+#   # if save_figure == True:
+#     # plt.savefig(fig_name)
   
 
-# SP and actual conditionals comparison
+# # SP and actual conditionals comparison
 
-# SP vs actual (comparing setpoint and actual variables for each chamber)
-variables = ['CO2', 'Temp', 'RH', 'PAR']
-var_low_bound = {'CO2':0, 'Temp':100, 'RH':25, 'PAR':0}
-var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
-units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
+# # SP vs actual (comparing setpoint and actual variables for each chamber)
+# variables = ['CO2', 'Temp', 'RH', 'PAR']
+# var_low_bound = {'CO2':0, 'Temp':100, 'RH':25, 'PAR':0}
+# var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
+# units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
+# # date_low_limit = pd.to_datetime('2025-05-01')
+# # date_upper_limit = pd.to_datetime('2025-08-08')
+# date_format = mdates.DateFormatter('%m/%d')
+# for var in variables:
+#   plt.clf()
+#   fig, axes = plt.subplots(2,1)
+#   for chamber, group in data.groupby('Chamber'):
+#     axes[0].plot(group['minute'], group[var], label = chamber)
+#   axes[0].xaxis.set_major_formatter(date_format)
+#   axes[0].set_title(f'{var} Actual in Both Chambers')
+#   axes[0].legend(title = 'A=HiC, B=LowC')
+#   axes[0].set_ylim(var_low_bound[var], var_upper_bound[var])
+#   # axes[0].set_xlim(date_low_limit, date_upper_limit)
+#   for chamber, group in data_sp.groupby('Chamber'):
+#     axes[1].plot(group['minute'], group[var], label = chamber)
+#   axes[1].xaxis.set_major_formatter(date_format)
+#   axes[1].set_title(f'{var} Set Point in Both Chambers')
+#   axes[1].legend(title = 'A=HiC, B=LowC')
+#   axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
+#   # axes[1].set_xlim(date_low_limit, date_upper_limit)
+#   plt.subplots_adjust(hspace=0.5)  
+#   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp_vs_actual_{current_date}{additional_file_info}.png'
+#   # if save_figure == True:
+#     # plt.savefig(fig_name)
+#   st.pyplot(fig)
+
+# # SP and actual (comparing side by side the setpoint and the actual measurements)
+
+# data['actual_sp'] = 'actual'
+# data_sp['actual_sp'] = 'sp'
+# data_total = pd.concat([data, data_sp])
+# variables = ['CO2', 'Temp', 'RH', 'PAR']
+# var_low_bound = {'CO2':0, 'Temp':100, 'RH':25, 'PAR':0}
+# var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
+# units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
 # date_low_limit = pd.to_datetime('2025-05-01')
 # date_upper_limit = pd.to_datetime('2025-08-08')
-date_format = mdates.DateFormatter('%m/%d')
-for var in variables:
-  plt.clf()
-  fig, axes = plt.subplots(2,1)
-  for chamber, group in data.groupby('Chamber'):
-    axes[0].plot(group['minute'], group[var], label = chamber)
-  axes[0].xaxis.set_major_formatter(date_format)
-  axes[0].set_title(f'{var} Actual in Both Chambers')
-  axes[0].legend(title = 'A=HiC, B=LowC')
-  axes[0].set_ylim(var_low_bound[var], var_upper_bound[var])
-  # axes[0].set_xlim(date_low_limit, date_upper_limit)
-  for chamber, group in data_sp.groupby('Chamber'):
-    axes[1].plot(group['minute'], group[var], label = chamber)
-  axes[1].xaxis.set_major_formatter(date_format)
-  axes[1].set_title(f'{var} Set Point in Both Chambers')
-  axes[1].legend(title = 'A=HiC, B=LowC')
-  axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
-  # axes[1].set_xlim(date_low_limit, date_upper_limit)
-  plt.subplots_adjust(hspace=0.5)  
-  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp_vs_actual_{current_date}{additional_file_info}.png'
-  # if save_figure == True:
-    # plt.savefig(fig_name)
-  st.pyplot(fig)
-
-# SP and actual (comparing side by side the setpoint and the actual measurements)
-
-data['actual_sp'] = 'actual'
-data_sp['actual_sp'] = 'sp'
-data_total = pd.concat([data, data_sp])
-variables = ['CO2', 'Temp', 'RH', 'PAR']
-var_low_bound = {'CO2':0, 'Temp':100, 'RH':25, 'PAR':0}
-var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
-units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
-date_low_limit = pd.to_datetime('2025-05-01')
-date_upper_limit = pd.to_datetime('2025-08-08')
-date_format = mdates.DateFormatter('%m/%d')
-for var in variables:
-  plt.clf()
-  fig, axes = plt.subplots(2,1)
-  for actual_sp, group in data_total[data_total['Chamber'] == 'A'].groupby('actual_sp'):
-    axes[0].plot(group['minute'], group[var], label = actual_sp)
-  axes[0].xaxis.set_major_formatter(date_format)
-  axes[0].set_title(f'{var} Set Point and Actual in HiC Chamber (A)')
-  axes[0].legend()
-  axes[0].set_ylim(var_low_bound[var], var_upper_bound[var])
-  # axes[0].set_xlim(date_low_limit, date_upper_limit)
-  for actual_sp, group in data_total[data_total['Chamber'] == 'B'].groupby('actual_sp'):
-    axes[1].plot(group['minute'], group[var], label = actual_sp)
-  axes[1].xaxis.set_major_formatter(date_format)
-  axes[1].set_title(f'{var} Set Point and Actual in LowC Chamber (B)')
-  axes[1].legend()
-  axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
-  # axes[1].set_xlim(date_low_limit, date_upper_limit)
-  plt.subplots_adjust(hspace=0.5)  
-  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp&actual_{current_date}.png'
-  # if save_figure == True:
-  #   plt.savefig(fig_name)
-  st.pyplot(fig)
+# date_format = mdates.DateFormatter('%m/%d')
+# for var in variables:
+#   plt.clf()
+#   fig, axes = plt.subplots(2,1)
+#   for actual_sp, group in data_total[data_total['Chamber'] == 'A'].groupby('actual_sp'):
+#     axes[0].plot(group['minute'], group[var], label = actual_sp)
+#   axes[0].xaxis.set_major_formatter(date_format)
+#   axes[0].set_title(f'{var} Set Point and Actual in HiC Chamber (A)')
+#   axes[0].legend()
+#   axes[0].set_ylim(var_low_bound[var], var_upper_bound[var])
+#   # axes[0].set_xlim(date_low_limit, date_upper_limit)
+#   for actual_sp, group in data_total[data_total['Chamber'] == 'B'].groupby('actual_sp'):
+#     axes[1].plot(group['minute'], group[var], label = actual_sp)
+#   axes[1].xaxis.set_major_formatter(date_format)
+#   axes[1].set_title(f'{var} Set Point and Actual in LowC Chamber (B)')
+#   axes[1].legend()
+#   axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
+#   # axes[1].set_xlim(date_low_limit, date_upper_limit)
+#   plt.subplots_adjust(hspace=0.5)  
+#   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp&actual_{current_date}.png'
+#   # if save_figure == True:
+#   #   plt.savefig(fig_name)
+#   st.pyplot(fig)
 
 
-# Creating dataframe of difference between chambers (A - B) and graphing the difference
-data.reset_index(inplace=True)
-data_sp.reset_index(inplace=True)
-data.set_index(['minute', 'Chamber'], inplace=True)
-data_sp.set_index(['minute', 'Chamber'], inplace=True)
+# # Creating dataframe of difference between chambers (A - B) and graphing the difference
+# data.reset_index(inplace=True)
+# data_sp.reset_index(inplace=True)
+# data.set_index(['minute', 'Chamber'], inplace=True)
+# data_sp.set_index(['minute', 'Chamber'], inplace=True)
 
-diff_sp = pd.DataFrame(index=data.index)
+# diff_sp = pd.DataFrame(index=data.index)
 
-variables = ['CO2', 'Temp', 'RH', 'PAR']
+# variables = ['CO2', 'Temp', 'RH', 'PAR']
 
-for var in variables:
-  diff_sp[var] = data[var] - data_sp[var]
+# for var in variables:
+#   diff_sp[var] = data[var] - data_sp[var]
   
-diff_sp.dropna(how='any', inplace=True)
-diff_sp.reset_index(inplace=True)
+# diff_sp.dropna(how='any', inplace=True)
+# diff_sp.reset_index(inplace=True)
 
-variables = ['CO2', 'Temp', 'RH', 'PAR']
-var_low_bound = {'CO2':0, 'Temp':0, 'RH':0, 'PAR':0}
-var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
-units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
-date_low_limit = pd.to_datetime('2025-05-01')
-date_upper_limit = pd.to_datetime('2025-08-08')
-date_format = mdates.DateFormatter('%m/%d')
-for var in variables:
-  plt.clf()
-  fig, ax = plt.subplots(1,1)
-  for chamber, group in diff_sp.groupby('Chamber'):
-    ax.plot(group['minute'], group[var], label = chamber)
-  ax.xaxis.set_major_formatter(date_format)
-  ax.set_title(f'{var} Actual - Set Point in Both Chambers')
-  ax.legend(title = 'A=HiC, B=LowC')
-  ax.set_ylim(var_low_bound[var], var_upper_bound[var])
-  # ax.set_xlim(date_low_limit, date_upper_limit)
-  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between sp_and_actual_{var}_{current_date}{additional_file_info}.png'
-  # if save_figure == True:
-  #   plt.savefig(fig_name)
-  st.pyplot(fig)
+# variables = ['CO2', 'Temp', 'RH', 'PAR']
+# var_low_bound = {'CO2':0, 'Temp':0, 'RH':0, 'PAR':0}
+# var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
+# units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
+# date_low_limit = pd.to_datetime('2025-05-01')
+# date_upper_limit = pd.to_datetime('2025-08-08')
+# date_format = mdates.DateFormatter('%m/%d')
+# for var in variables:
+#   plt.clf()
+#   fig, ax = plt.subplots(1,1)
+#   for chamber, group in diff_sp.groupby('Chamber'):
+#     ax.plot(group['minute'], group[var], label = chamber)
+#   ax.xaxis.set_major_formatter(date_format)
+#   ax.set_title(f'{var} Actual - Set Point in Both Chambers')
+#   ax.legend(title = 'A=HiC, B=LowC')
+#   ax.set_ylim(var_low_bound[var], var_upper_bound[var])
+#   # ax.set_xlim(date_low_limit, date_upper_limit)
+#   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between sp_and_actual_{var}_{current_date}{additional_file_info}.png'
+#   # if save_figure == True:
+#   #   plt.savefig(fig_name)
+#   st.pyplot(fig)
 
 
-# Creating a dataframe of the difference between actual and setpoint (a - sp) and graphing for each chamber.
+# # Creating a dataframe of the difference between actual and setpoint (a - sp) and graphing for each chamber.
 
-df_list = [data_a, data_b, data_sp_a, data_sp_b]
+# df_list = [data_a, data_b, data_sp_a, data_sp_b]
 
-for df in df_list:
-  for var in variables:
-    df[var] = pd.to_numeric(df[var])
+# for df in df_list:
+#   for var in variables:
+#     df[var] = pd.to_numeric(df[var])
 
-diff_actual = pd.DataFrame(index = data_a.index)
-diff_set = pd.DataFrame(index = data_sp_a.index)
-diff_actual = data_a.set_index('minute') - data_b.set_index('minute')
-diff_set = data_sp_a.set_index('minute') - data_sp_b.set_index('minute')
-diff_actual['actual_sp'] = 'actual'
-diff_set['actual_sp'] = 'sp'
+# diff_actual = pd.DataFrame(index = data_a.index)
+# diff_set = pd.DataFrame(index = data_sp_a.index)
+# diff_actual = data_a.set_index('minute') - data_b.set_index('minute')
+# diff_set = data_sp_a.set_index('minute') - data_sp_b.set_index('minute')
+# diff_actual['actual_sp'] = 'actual'
+# diff_set['actual_sp'] = 'sp'
 
-diff_total = pd.concat([diff_actual, diff_set])
-diff_total.reset_index(inplace=True)
+# diff_total = pd.concat([diff_actual, diff_set])
+# diff_total.reset_index(inplace=True)
 
-# plt.clf()
-# fig, axes = plt.subplots(2,2)
-# axes = axes.flatten()
-# for i, var in enumerate(variables):
+# # plt.clf()
+# # fig, axes = plt.subplots(2,2)
+# # axes = axes.flatten()
+# # for i, var in enumerate(variables):
+# #   for actual_sp, group in diff_total.groupby('actual_sp'):
+# #     axes[i].plot(group['minute'], group[var], label = actual_sp)
+# #   axes[i].legend()
+# # plt.show()
+
+# for var in variables:
+#   plt.clf()
+#   fig, axes = plt.subplots(1,1)
 #   for actual_sp, group in diff_total.groupby('actual_sp'):
-#     axes[i].plot(group['minute'], group[var], label = actual_sp)
-#   axes[i].legend()
-# plt.show()
-
-for var in variables:
-  plt.clf()
-  fig, axes = plt.subplots(1,1)
-  for actual_sp, group in diff_total.groupby('actual_sp'):
-    axes.plot(group['minute'], group[var], label = actual_sp)
-  axes.legend()
-  axes.set_title(f'Difference Between Chamber A and Chamber B in {var}')
-  date_format = mdates.DateFormatter('%m/%d')
-  axes.xaxis.set_major_formatter(date_format)
-  st.pyplot(fig)
-  # fig_name=f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between_chambers_{var}_{current_date}{additional_file_info}.png'
-  # if save_figure == True:
-  #   plt.savefig(fig_name)
+#     axes.plot(group['minute'], group[var], label = actual_sp)
+#   axes.legend()
+#   axes.set_title(f'Difference Between Chamber A and Chamber B in {var}')
+#   date_format = mdates.DateFormatter('%m/%d')
+#   axes.xaxis.set_major_formatter(date_format)
+#   st.pyplot(fig)
+#   # fig_name=f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between_chambers_{var}_{current_date}{additional_file_info}.png'
+#   # if save_figure == True:
+#   #   plt.savefig(fig_name)
   
