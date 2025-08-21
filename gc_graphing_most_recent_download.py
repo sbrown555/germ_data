@@ -134,7 +134,6 @@ df = data_from_date(newest_folder, time_offset, actual=True)
 # st.write(df.head())
 
 Graphing
-```{python}
 
 # Regular graphing of variables with PAR for each chamber
 # Graphing zoomed CO2/PAR
