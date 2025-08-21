@@ -10,7 +10,7 @@ from io import StringIO
 import streamlit as st
 import os
 
-sa_info = json.loads(os.environ["SERVICE_ACCOUNT_JSON"])
+sa_info = json.loads(st.secrets["SERVICE_ACCOUNT_JSON"])
 client_email = sa_info["client_email"]
 
 with open(SERVICE_ACCOUNT_JSON) as f:
