@@ -8,8 +8,10 @@ import matplotlib.dates as mdates
 # import requests
 from io import StringIO
 import streamlit as st
+import os
 
-SERVICE_ACCOUNT_JSON = "/Users/sean/Documents/Sean/Lara Research/GC Data/operating-pod-469720-b9-214b1ebc73b3.json"
+sa_info = json.loads(os.environ["SERVICE_ACCOUNT_JSON"])
+client_email = sa_info["client_email"]
 
 with open(SERVICE_ACCOUNT_JSON) as f:
     sa_info = json.load(f)
