@@ -129,17 +129,25 @@ def data_from_date(date_folder, time_offset, actual):
 time_offset = [pd.Timedelta(days=0), pd.Timedelta(days=0)]
 
 data = data_from_date(newest_folder, time_offset, actual=True)
-data.reset_index(inplace=True)
 
+# Separating dataset by chamber for graphing
 
-# st.write(df.head())
+data_a = data[data['Chamber'] == 'A'].copy()
+data_b = data[data['Chamber'] == 'B'].copy()
+data_sp_a = data_sp[data_sp['Chamber'] == 'A'].copy()
+data_sp_b = data_sp[data_sp['Chamber'] == 'B'].copy()
 
-variables = ['CO2', 'Temp', 'RH', 'PAR']
-cols = ['minute'] + variables
-data_a = data_a[cols]
-data_b = data_b[cols]
-data_sp_a = data_sp_a[cols]
-data_sp_b = data_sp_b[cols]
+list_df = [data_a, data_b]
+
+for df in list_df:
+  df.drop('Chamber', axis=1, inplace=True)
+
+# variables = ['CO2', 'Temp', 'RH', 'PAR']
+# cols = ['minute'] + variables
+# data_a = data_a[cols]
+# data_b = data_b[cols]
+# data_sp_a = data_sp_a[cols]
+# data_sp_b = data_sp_b[cols]
 
 
 # Regular graphing of variables with PAR for each chamber
