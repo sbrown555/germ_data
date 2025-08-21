@@ -13,9 +13,9 @@ import os
 sa_info = json.loads(st.secrets["SERVICE_ACCOUNT_JSON"])
 client_email = sa_info["client_email"]
 
-with open(SERVICE_ACCOUNT_JSON) as f:
-    sa_info = json.load(f)
-client_email = sa_info["client_email"]
+# with open(SERVICE_ACCOUNT_JSON) as f:
+#     sa_info = json.load(f)
+# client_email = sa_info["client_email"]
 gauth = GoogleAuth()
 
 # Fully define settings dictionary
