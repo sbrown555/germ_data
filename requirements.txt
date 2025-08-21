@@ -1,0 +1,6 @@
+pandas
+streamlit
+pydrive2
+requests
+plotly
+matplotlib
