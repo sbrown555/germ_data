@@ -154,7 +154,7 @@ for df in list_df:
 # Regular graphing of variables with PAR for each chamber
 # Graphing zoomed CO2/PAR
 
-plt.clf()
+# plt.clf()
 fig, axes = plt.subplots(2,1, figsize=(8,6))
 
 ax1 = axes[0]
@@ -196,6 +196,7 @@ fig.suptitle('CO2 and PAR in Both Chambers')
 
 fig.tight_layout()
 st.pyplot(fig)
+plt.close(fig)
 
 # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/co2_par_zoomed_in_{current_date}{additional_file_info}.png'
 # if save_figure == True:
@@ -205,8 +206,6 @@ st.pyplot(fig)
 
 variables = ['CO2','RH','Temp']
 for var in variables:
-  
-  plt.clf()
   fig, axes = plt.subplots(2,1, figsize=(8,6))
   # var_low_bound_lowc = 350
   # var_up_bound_lowc = 900
@@ -246,6 +245,7 @@ for var in variables:
   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_par_{current_date}{additional_file_info}.png'
   # if save_figure == True:
     # plt.savefig(fig_name)
+  plt.close(fig)
   
 
 # SP and actual conditionals comparison
@@ -259,7 +259,6 @@ units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
 # date_upper_limit = pd.to_datetime('2025-08-08')
 date_format = mdates.DateFormatter('%m/%d')
 for var in variables:
-  plt.clf()
   fig, axes = plt.subplots(2,1)
   for chamber, group in data.groupby('Chamber'):
     axes[0].plot(group['minute'], group[var], label = chamber)
@@ -280,6 +279,7 @@ for var in variables:
   # if save_figure == True:
     # plt.savefig(fig_name)
   st.pyplot(fig)
+  plt.close(fig)
 
 # SP and actual (comparing side by side the setpoint and the actual measurements)
 
@@ -314,7 +314,7 @@ for var in variables:
   # if save_figure == True:
   #   plt.savefig(fig_name)
   st.pyplot(fig)
-  plt.clf()
+  plt.close(fig)
 
 
 
@@ -354,7 +354,7 @@ for var in variables:
 #   # if save_figure == True:
 #   #   plt.savefig(fig_name)
 #   st.pyplot(fig)
-#   plt.clf()
+#   plt.close(fig)
 
 
 # # Creating a dataframe of the difference between actual and setpoint (a - sp) and graphing for each chamber.
@@ -396,5 +396,5 @@ for var in variables:
 #   # fig_name=f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between_chambers_{var}_{current_date}{additional_file_info}.png'
 #   # if save_figure == True:
 #   #   plt.savefig(fig_name)
-#   plt.clf()
+#   plt.close(fig)
 
