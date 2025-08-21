@@ -10,8 +10,8 @@ from io import StringIO
 import streamlit as st
 import os
 
-sa_info = json.loads(st.secrets["SERVICE_ACCOUNT_JSON"])
-client_email = sa_info["client_email"]
+sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
+client_email = json.loads(sa_json_str)["client_email"]
 
 # with open(SERVICE_ACCOUNT_JSON) as f:
 #     sa_info = json.load(f)
@@ -22,7 +22,8 @@ gauth = GoogleAuth()
 gauth.settings = {
     'client_config_backend': 'service',
     'service_config': {
-        'client_json': sa_info,
+        'client_json_file_path': None,
+        'client_json': sa_json_str,
         'client_user_email': client_email
     },
     'oauth_scope': ['https://www.googleapis.com/auth/drive']
