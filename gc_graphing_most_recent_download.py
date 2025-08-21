@@ -197,7 +197,7 @@ fig.suptitle('CO2 and PAR in Both Chambers')
 fig.tight_layout()
 st.pyplot(fig)
 
-fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/co2_par_zoomed_in_{current_date}{additional_file_info}.png'
+# fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/co2_par_zoomed_in_{current_date}{additional_file_info}.png'
 # if save_figure == True:
   # plt.savefig(fig_name)
 
@@ -243,7 +243,7 @@ for var in variables:
     # axes[1].set_ylim(400, 500)
   fig.tight_layout()
   st.pyplot(fig)
-  fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_par_{current_date}{additional_file_info}.png'
+  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_par_{current_date}{additional_file_info}.png'
   # if save_figure == True:
     # plt.savefig(fig_name)
   
@@ -276,7 +276,7 @@ for var in variables:
   axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
   # axes[1].set_xlim(date_low_limit, date_upper_limit)
   plt.subplots_adjust(hspace=0.5)  
-  fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp_vs_actual_{current_date}{additional_file_info}.png'
+  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp_vs_actual_{current_date}{additional_file_info}.png'
   # if save_figure == True:
     # plt.savefig(fig_name)
   st.pyplot(fig)
@@ -311,7 +311,7 @@ for var in variables:
   axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
   # axes[1].set_xlim(date_low_limit, date_upper_limit)
   plt.subplots_adjust(hspace=0.5)  
-  fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp&actual_{current_date}.png'
+  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp&actual_{current_date}.png'
   # if save_figure == True:
   #   plt.savefig(fig_name)
   st.pyplot(fig)
@@ -350,7 +350,7 @@ for var in variables:
   ax.legend(title = 'A=HiC, B=LowC')
   ax.set_ylim(var_low_bound[var], var_upper_bound[var])
   # ax.set_xlim(date_low_limit, date_upper_limit)
-  fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between sp_and_actual_{var}_{current_date}{additional_file_info}.png'
+  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between sp_and_actual_{var}_{current_date}{additional_file_info}.png'
   # if save_figure == True:
   #   plt.savefig(fig_name)
   st.pyplot(fig)
@@ -393,7 +393,7 @@ for var in variables:
   date_format = mdates.DateFormatter('%m/%d')
   axes.xaxis.set_major_formatter(date_format)
   st.pyplot(fig)
-  fig_name=f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between_chambers_{var}_{current_date}{additional_file_info}.png'
+  # fig_name=f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between_chambers_{var}_{current_date}{additional_file_info}.png'
   # if save_figure == True:
   #   plt.savefig(fig_name)
   
