@@ -129,6 +129,7 @@ def data_from_date(date_folder, time_offset, actual):
 time_offset = [pd.Timedelta(days=0), pd.Timedelta(days=0)]
 
 data = data_from_date(newest_folder, time_offset, actual=True)
+data.reset_index(inplace=True)
 
 
 # st.write(df.head())
