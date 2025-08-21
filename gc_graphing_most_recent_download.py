@@ -128,10 +128,17 @@ def data_from_date(date_folder, time_offset, actual):
 
 time_offset = [pd.Timedelta(days=0), pd.Timedelta(days=0)]
 
-df = data_from_date(newest_folder, time_offset, actual=True)
+data = data_from_date(newest_folder, time_offset, actual=True)
 
 
 # st.write(df.head())
+
+variables = ['CO2', 'Temp', 'RH', 'PAR']
+cols = ['minute'] + variables
+data_a = data_a[cols]
+data_b = data_b[cols]
+data_sp_a = data_sp_a[cols]
+data_sp_b = data_sp_b[cols]
 
 
 # Regular graphing of variables with PAR for each chamber
@@ -342,13 +349,6 @@ for var in variables:
 # Creating a dataframe of the difference between actual and setpoint (a - sp) and graphing for each chamber.
 
 df_list = [data_a, data_b, data_sp_a, data_sp_b]
-
-variables = ['CO2', 'Temp', 'RH', 'PAR']
-cols = ['minute'] + variables
-data_a = data_a[cols]
-data_b = data_b[cols]
-data_sp_a = data_sp_a[cols]
-data_sp_b = data_sp_b[cols]
 
 for df in df_list:
   for var in variables:
