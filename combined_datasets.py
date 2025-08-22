@@ -188,16 +188,17 @@ for date in sorted(file_dict.keys()):
 
 file_name = "gc_data_processed_{current_date}.csv"
 
+
 csv_buffer = StringIO()
 data.to_csv(csv_buffer, index=False)
-csv_buffer.seek(0)
+csv_bytes = csv_buffer.getvalue().encode('utf-8')  # convert to bytes
+
 st.download_button(
     label="Download Combined Dataset",
-    data=csv_buffer,
+    data=csv_bytes,
     file_name=file_name,
-    mime="text/csv"
+    mime='text/csv'
 )
-
 # Check to see if there is already an up-to-date processed file, and if not save new processed file
 
 
