@@ -236,7 +236,7 @@ for df in list_df:
 # Graphing zoomed CO2/PAR
 
 # plt.clf()
-fig, axes = plt.subplots(2,1, figsize=(8,6))
+fig, axes = plt.subplots(2,1)
 
 ax1 = axes[0]
 ax1.plot(data_a['minute'], data_a['CO2'], 'b-', label='CO2')
@@ -287,7 +287,7 @@ plt.close(fig)
 
 variables = ['CO2','RH','Temp']
 for var in variables:
-  fig, axes = plt.subplots(2,1, figsize=(8,6))
+  fig, axes = plt.subplots(2,1)
   # var_low_bound_lowc = 350
   # var_up_bound_lowc = 900
   # var_low_bound_hic = 350
@@ -356,6 +356,7 @@ for var in variables:
   axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
   # axes[1].set_xlim(date_low_limit, date_upper_limit)
   plt.subplots_adjust(hspace=0.5)  
+  fig.tight_layout()
   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp_vs_actual_{current_date}{additional_file_info}.png'
   # if save_figure == True:
     # plt.savefig(fig_name)
@@ -387,7 +388,8 @@ for var in variables:
   axes[1].legend()
   axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
   # axes[1].set_xlim(date_low_limit, date_upper_limit)
-  plt.subplots_adjust(hspace=0.5)  
+  plt.subplots_adjust(hspace=0.5)
+  fig.tight_layout()
   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp&actual_{current_date}.png'
   # if save_figure == True:
   #   plt.savefig(fig_name)
