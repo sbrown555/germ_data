@@ -241,7 +241,7 @@ if actual_sp != 'Both':
 
 cols = ['minute']+variables
 df = df[cols]
-group = ['minute']+group
+group = ['minute', 'Chamber, 'actual_sp']
 df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])
