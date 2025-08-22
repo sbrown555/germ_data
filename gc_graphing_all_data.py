@@ -194,7 +194,7 @@ for date in sorted(file_dict.keys()):
   data_new = data_new[data_new['minute'] > last_processing_time]
   data = pd.concat([data_new, data])
   # With data downloaded individually, the above cause some duplicate rows possibly, although it doesn't really make sense to me why
-  # data.drop_duplicates(subset=['minute', 'Chamber', 'acutal_sp', 'CO2'])
+  # data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
 
 df = data.copy()
 
@@ -229,7 +229,8 @@ max_date = data['minute'].max().to_pydatetime()
 date_range = st.slider("Select date range", min_value=min_date, max_value=max_date, value=(min_date, max_date))
 # Filter data
 data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
-data.drop_duplicates(subset=['minute', 'Chamber', 'acutal_sp', 'CO2'])
+data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
+data.drop([0,-1], inplace=True)
 
 data_total = data.copy()
 data_sp = data[data['actual_sp'] == 'sp'].copy()
