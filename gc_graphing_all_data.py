@@ -246,7 +246,7 @@ for df in list_df:
 
 
 # plt.clf()
-fig, axes = plt.subplots(2,1)
+fig, axes = plt.subplots(2,1, figsize = (8,4.8))
 
 ax1 = axes[0]
 ax1.plot(data_a['minute'], data_a['CO2'], 'b-', label='CO2')
@@ -259,7 +259,7 @@ ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
 ax2.set_ylabel('PAR', color = 'r')
 ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
 ax2.set_ylim(0,1500)
-ax2.spines["right"].set_position(("outward", 60))  # 60 pts away from ax1
+# ax2.spines["right"].set_position(("outward", 60))  # 60 pts away from ax1
 
 
 ax3 = axes[1]
@@ -274,7 +274,7 @@ ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
 ax4.set_ylabel('PAR', color = 'r')
 ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
 ax4.set_ylim(0,1500)
-ax4.spines["right"].set_position(("outward", 60))  # 60 pts away from ax1
+# ax4.spines["right"].set_position(("outward", 60))  # 60 pts away from ax1
 
 date_format = mdates.DateFormatter('%m/%d')
 
