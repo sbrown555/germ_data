@@ -217,6 +217,10 @@ st.download_button(
 
 # Changing definitions of data so compatible with graphing code I copied and pasted here
 data['minute'] = pd.to_datetime(data['minute'])
+variables = ['CO2', 'Temp', 'RH', 'PAR']
+for var in variables:
+  data[var] = pd.to_numeric(data[var])
+data.dropna(how='any')
 min_date = data['minute'].min().to_pydatetime()
 max_date = data['minute'].max().to_pydatetime()
 
