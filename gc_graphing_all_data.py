@@ -193,7 +193,8 @@ for date in sorted(file_dict.keys()):
   data_new = pd.concat([data_actual_new, data_sp_new])
   data_new = data_new[data_new['minute'] > last_processing_time]
   data = pd.concat([data_new, data])
-  # With data downloaded individually, the above cause some duplicate rows possibl
+  # With data downloaded individually, the above cause some duplicate rows possibly, although it doesn't really make sense to me why
+  data.drop_duplicates(subset=['minute', 'Chamber', 'acutal_sp', 'CO2'])
 
 df = data.copy()
 
