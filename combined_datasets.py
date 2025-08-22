@@ -248,8 +248,8 @@ df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
 df_grouped.reset_index(inplace=True)
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])
-fig.add_trace(go.Scatter(x=df['minute'], y = df[variables[0]], name = variables[0]), mode='lines', secondary_y=False)
-fig.add_trace(go.Scatter(x=df['minute'], y = df[variables[1]], name = variables[1]), mode='lines', secondary_y=True)
+fig.add_trace(go.Scatter(x=df['minute'], y = df[variables[0]], name = variables[0], mode='lines'), secondary_y=False)
+fig.add_trace(go.Scatter(x=df['minute'], y = df[variables[1]], name = variables[1], mode='lines'), secondary_y=True)
 st.plotly_chart(fig)
 
 
