@@ -220,7 +220,7 @@ st.download_button(
 
 df = data.copy()
 
-filter_options = ['Chamber A', ''Actual/SP']
+filter_options = ['Chamber A', 'Actual/SP']
 group_options = ['chamber', 'actual_sp']
 var_options = ['CO2', 'RH', 'Temp', 'PAR']
 
