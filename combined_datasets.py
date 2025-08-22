@@ -8,6 +8,7 @@ import matplotlib.dates as mdates
 # import requests
 from io import StringIO
 from datetime import date
+import streamlit as st
 
 
 # Defining functions 
@@ -167,12 +168,12 @@ for date in sorted(file_dict.keys()):
 file_name = "gc_data_processed_{current_date}.csv"
 
 csv_buffer = StringIO()
-  data.to_csv(csv_buffer, index=False)
-  csv_buffer.seek(0)
+data.to_csv(csv_buffer, index=False)
+csv_buffer.seek(0)
 st.download_button(
-    label="Download CSV",
+    label="Download Combined Dataset",
     data=csv_buffer,
-    file_name="gc_data_processed.csv",
+    file_name=file_name,
     mime="text/csv"
 )
 
