@@ -190,12 +190,13 @@ for date in sorted(file_dict.keys()):
 
 
 # Check to see if there is already an up-to-date processed file, and if not save new processed file
-current_date = date.today().strftime('%d%b%y')
+current_date = pd.to_datetime(data['minute']).max().date
 file_name = f"gc_data_processed_{current_date}.csv"
 
 duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
 if not duplicate_check:
   st.write('There is an updated file!')
+else:
   st.write('No new data')
 csv_buffer = StringIO()
 data.to_csv(csv_buffer, index=False)
