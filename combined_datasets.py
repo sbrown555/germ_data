@@ -228,7 +228,7 @@ var_options = ['CO2', 'RH', 'Temp', 'PAR']
 # group = st.multiselect(label = 'Group by:', options = group_options, key = 'group')
 variables = st.multiselect(label = 'Select which variables to graph: ', options = var_options, key='variables', default = ['PAR', 'CO2'])
 if len(variables) > 2:
-  st.error('Can't select more than two variables at a time')
+  st.error("Can't select more than two variables at a time")
 
 chamber = st.radio(label = 'Chamber', options = ['A', 'B', 'Both'], key = 'chamber_radio', default = 'Both')
 actual_sp = st.radio(label = 'Actual or Setpoint', options = ['actual', 'sp', 'Both'], default = 'Both', key='actual_sp_radio')
