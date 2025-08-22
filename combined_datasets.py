@@ -9,6 +9,9 @@ import matplotlib.dates as mdates
 from io import StringIO
 from datetime import date
 import streamlit as st
+import plotly.express as px 
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 
 # Defining functions 
@@ -184,23 +187,25 @@ for date in sorted(file_dict.keys()):
   data_new = pd.concat([data_actual_new, data_sp_new])
   data_new = data_new[data_new['minute'] > last_processing_time]
   data = pd.concat([data_new, data])
-  
-
-file_name = "gc_data_processed_{current_date}.csv"
 
 
+# Check to see if there is already an up-to-date processed file, and if not save new processed file
+
+file_name = f"gc_data_processed_{current_date}.csv"
+
+duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
+if not duplicate_check:
+  st.write('There is an updated file!')
+  st.write('No new data')
 csv_buffer = StringIO()
 data.to_csv(csv_buffer, index=False)
 csv_bytes = csv_buffer.getvalue().encode('utf-8')  # convert to bytes
-
 st.download_button(
     label="Download Combined Dataset",
     data=csv_bytes,
     file_name=file_name,
     mime='text/csv'
 )
-# Check to see if there is already an up-to-date processed file, and if not save new processed file
-
 
 # # This last piece of uploading new dataset to google drive doesn't work with personal google accounts, only shared drives. I can't create a shared drive with my account. I asked for WFFRC permission to share the relevant folders on the WFFRC drive. If they approve I'll need to change the folder IDs to reflect folders on WFFRC shared drive rather than Jazmin's personal drive where they are now.
 # duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
@@ -212,4 +217,61 @@ st.download_button(
 #   gfile.SetContentString(csv_buffer.getvalue())
 #   gfile.Upload()
 #   print("CSV uploaded successfully!")
-  
+
+df = data.copy()
+
+filter_options = ['Chamber A', ''Actual/SP']
+group_options = ['chamber', 'actual_sp']
+var_options = ['CO2', 'RH', 'Temp', 'PAR']
+
+# filter = st.multiselect(label = 'Filter by:', options = filter_options, key = 'filter')
+# group = st.multiselect(label = 'Group by:', options = group_options, key = 'group')
+variables = st.multiselect(label = 'Select which variables to graph: ', options = var_options, key='variables', default = ['PAR', 'CO2'])
+if len(variables) > 2:
+  st.error('Can't select more than two variables at a time')
+
+chamber = st.radio(label = 'Chamber', options = ['A', 'B', 'Both'], key = 'chamber_radio', default = 'Both')
+actual_sp = st.radio(label = 'Actual or Setpoint', options = ['actual', 'sp', 'Both'], default = 'Both', key='actual_sp_radio')
+
+if chamber != 'Both':
+    df = df[df['Chamber'] == chamber]
+
+if actual_sp != 'Both':
+  df = df[df['actual_sp'] == actual_sp]
+
+cols = ['minute']+variables
+df = df[cols]
+group = ['minute']+group
+df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
+
+fig = make_subplots(specs=[[{"secondary_y": True}]])
+fig.add_trace(go.line(x=df['minute'], y = df[variables[0]], name = variables[0]), secondary_y=False)
+fig.add_trace(go.line(x=df['minute'], y = df[variables[1]], name = variables[1]), secondary_y=True)
+
+
+fig = px.line(df, x = 'minute', y = 
+fig_temp = px.line(df_temp_grouped, x = "DateTime", y = "Temperature", color = 'group', title = 'Soil Temperature Sensors')
+fig_temp.update_layout(xaxis_title = 'Time', yaxis_title = 'Temperature_(C)', height = 600)
+st.plotly_chart(fig_temp)
+
+
+
+
+
+# # Update axis titles
+# fig.update_yaxes(title_text="Left Y-axis", secondary_y=False)
+# fig.update_yaxes(title_text="Right Y-axis", secondary_y=True)
+
+# fig.show()
+
+
+
+
+
+# for 
+# data = data[data[filter]
+# for term in filter:
+#   data = data[data.isin([term]).any(axis=1)]
+
+# for term in filter_temp:
+#     df_temp = df_temp[df_temp.isin([term]).any(axis=1)]
