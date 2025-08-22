@@ -246,7 +246,7 @@ for df in list_df:
 
 
 # plt.clf()
-fig, axes = plt.subplots(2,1, figsize = (12,6)))
+fig, axes = plt.subplots(2,1, figsize = (12,6))
 
 ax1 = axes[0]
 ax1.plot(data_a['minute'], data_a['CO2'], 'b-', label='CO2')
