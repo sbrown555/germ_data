@@ -193,6 +193,7 @@ for date in sorted(file_dict.keys()):
   data_new = pd.concat([data_actual_new, data_sp_new])
   data_new = data_new[data_new['minute'] > last_processing_time]
   data = pd.concat([data_new, data])
+  # With data downloaded individually, the above cause some duplicate rows possibl
 
 df = data.copy()
 
