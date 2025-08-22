@@ -166,12 +166,13 @@ file_dict = {}
 for file in file_list:
   try: 
     date = pd.to_datetime(file['title'].split('_')[0])
+    date_list.append(date)
     if date > last_processing_date:
-      date_list.append(date)
       file_dict[date] = file
   except Exception as e:
     file_name = file['title']
     print(f"failed to review {file_name}: {e}")
+current_date = max(date_list).strftime(format = '%d%b%y')
 
 # Adding as-yet unprocessed data to the primary dataset
 data = data_old
@@ -190,7 +191,6 @@ for date in sorted(file_dict.keys()):
 
 
 # Check to see if there is already an up-to-date processed file, and if not save new processed file
-current_date = pd.to_datetime(data['minute']).max().date
 file_name = f"gc_data_processed_{current_date}.csv"
 
 duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
