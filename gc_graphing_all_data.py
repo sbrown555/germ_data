@@ -270,7 +270,7 @@ for ax in axes:
   
 axes[0].set_title('Elevated CO2 Chamber (HiC): 650-750 ppm')
 axes[1].set_title('Ambient CO2 Chamber (LowC): 400-500 ppm')
-fig.suptitle('CO2 and PAR in Both Chambers')
+# fig.suptitle('CO2 and PAR in Both Chambers')
   
 # axes[0].set_ylim(650, 750)
 # axes[1].set_ylim(400, 500)
@@ -318,7 +318,7 @@ for var in variables:
     ax.xaxis.set_major_formatter(date_format)
     axes[0].set_title(f'{var} Elevated CO2 Chamber (HiC)')
     axes[1].set_title(f'{var} Ambient CO2 Chamber (LowC)')
-    fig.suptitle(f'{var} and PAR in Both Chambers')
+    # fig.suptitle(f'{var} and PAR in Both Chambers')
     # axes[0].set_ylim(650, 750)
     # axes[1].set_ylim(400, 500)
   fig.tight_layout()
