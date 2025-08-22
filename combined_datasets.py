@@ -242,39 +242,39 @@ if actual_sp != 'Both':
 cols = ['minute', 'Chamber', 'actual_sp']+variables
 df = df[cols]
 st.dataframe(df)
-group = ['minute', 'Chamber', 'actual_sp']
-df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
-df_grouped.reset_index(inplace=True)
+# group = ['minute', 'Chamber', 'actual_sp']
+# df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
+# df_grouped.reset_index(inplace=True)
 
-fig = make_subplots(specs=[[{"secondary_y": True}]])
-fig.add_trace(go.line(x=df['minute'], y = df[variables[0]], name = variables[0]), secondary_y=False)
-fig.add_trace(go.line(x=df['minute'], y = df[variables[1]], name = variables[1]), secondary_y=True)
-st.plotly_chart(fig)
-
-
-# fig = px.line(df, x = 'minute', y = 
-# fig_temp = px.line(df_temp_grouped, x = "DateTime", y = "Temperature", color = 'group', title = 'Soil Temperature Sensors')
-# fig_temp.update_layout(xaxis_title = 'Time', yaxis_title = 'Temperature_(C)', height = 600)
-# st.plotly_chart(fig_temp)
+# fig = make_subplots(specs=[[{"secondary_y": True}]])
+# fig.add_trace(go.line(x=df['minute'], y = df[variables[0]], name = variables[0]), secondary_y=False)
+# fig.add_trace(go.line(x=df['minute'], y = df[variables[1]], name = variables[1]), secondary_y=True)
+# st.plotly_chart(fig)
 
 
-
-
-
-# # Update axis titles
-# fig.update_yaxes(title_text="Left Y-axis", secondary_y=False)
-# fig.update_yaxes(title_text="Right Y-axis", secondary_y=True)
-
-# fig.show()
+# # fig = px.line(df, x = 'minute', y = 
+# # fig_temp = px.line(df_temp_grouped, x = "DateTime", y = "Temperature", color = 'group', title = 'Soil Temperature Sensors')
+# # fig_temp.update_layout(xaxis_title = 'Time', yaxis_title = 'Temperature_(C)', height = 600)
+# # st.plotly_chart(fig_temp)
 
 
 
 
 
-# for 
-# data = data[data[filter]
-# for term in filter:
-#   data = data[data.isin([term]).any(axis=1)]
+# # # Update axis titles
+# # fig.update_yaxes(title_text="Left Y-axis", secondary_y=False)
+# # fig.update_yaxes(title_text="Right Y-axis", secondary_y=True)
 
-# for term in filter_temp:
-#     df_temp = df_temp[df_temp.isin([term]).any(axis=1)]
+# # fig.show()
+
+
+
+
+
+# # for 
+# # data = data[data[filter]
+# # for term in filter:
+# #   data = data[data.isin([term]).any(axis=1)]
+
+# # for term in filter_temp:
+# #     df_temp = df_temp[df_temp.isin([term]).any(axis=1)]
