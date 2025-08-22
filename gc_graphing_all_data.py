@@ -185,8 +185,10 @@ for date in sorted(file_dict.keys()):
   else:
     time_offset = [pd.Timedelta(days=0), pd.Timedelta(days=0)]
   data_actual_new = data_from_date(file_dict[date], actual=True, time_offset = time_offset)
+  data_actual_new['actual_sp'] = 'actual'
   data_actual_new = data_actual_new[columns]
   data_sp_new = data_from_date(file_dict[date], actual=False, time_offset=time_offset)
+  data_sp_new['actual_sp']='sp'
   data_sp_new = data_sp_new[columns]
   data_new = pd.concat([data_actual_new, data_sp_new])
   data_new = data_new[data_new['minute'] > last_processing_time]
