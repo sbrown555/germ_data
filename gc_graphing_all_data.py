@@ -208,6 +208,7 @@ st.download_button(
     mime='text/csv'
 )
 
+data['minute'] = pd.to_datetime['minute']
 data_a = data[data['Chamber'] == 'A'].copy()
 data_sp_a = data_a[data_a['actual_sp'] == 'sp']
 data_a = data_a[data_a['actual_sp'] == 'actual']
