@@ -154,7 +154,7 @@ for file in file_list:
   date_dict[date] = file
 last_processing_date = max(date_dict.keys())
 csv_id = date_dict[last_processing_date]['id']
-columns = ['minute', 'Temp', 'RH', 'PAR', 'CO2']
+columns = ['minute', 'Chamber', 'actual_sp','Temp', 'RH', 'PAR', 'CO2']
 data_old = read_drive_id(csv_id, cols = columns)
 last_processing_time = data_old['minute'].max()
 
