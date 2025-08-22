@@ -230,8 +230,8 @@ variables = st.multiselect(label = 'Select which variables to graph: ', options 
 if len(variables) > 2:
   st.error("Can't select more than two variables at a time")
 
-chamber = st.radio(label = 'Chamber', options = ['A', 'B', 'Both'], key = 'chamber_radio', default = 'Both')
-actual_sp = st.radio(label = 'Actual or Setpoint', options = ['actual', 'sp', 'Both'], default = 'Both', key='actual_sp_radio')
+chamber = st.radio(label = 'Chamber', options = ['A', 'B', 'Both'], key = 'chamber_radio', index = 2)
+actual_sp = st.radio(label = 'Actual or Setpoint', options = ['actual', 'sp', 'Both'], index = 2, key='actual_sp_radio')
 
 if chamber != 'Both':
     df = df[df['Chamber'] == chamber]
