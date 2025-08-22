@@ -1,3 +1,6 @@
+# Need to add actual xlim to graphs to keep axes from changing when data is missing
+# Need to add ylim through a dictionary giving high and low limits for each variable. Default should be None
+
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 import json
