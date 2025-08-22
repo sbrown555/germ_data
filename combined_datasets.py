@@ -241,6 +241,7 @@ if actual_sp != 'Both':
 
 cols = ['minute', 'Chamber', 'actual_sp']+variables
 df = df[cols]
+st.write(df)
 group = ['minute', 'Chamber', 'actual_sp']
 df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
 df_grouped.reset_index(inplace=True)
