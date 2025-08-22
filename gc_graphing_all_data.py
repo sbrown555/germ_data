@@ -230,7 +230,7 @@ date_range = st.slider("Select date range", min_value=min_date, max_value=max_da
 # Filter data
 data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
 data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
-data.drop([0,-1], inplace=True)
+data = data.iloc[1:-1]
 
 data_total = data.copy()
 data_sp = data[data['actual_sp'] == 'sp'].copy()
