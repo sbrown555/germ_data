@@ -210,6 +210,18 @@ st.download_button(
 
 # Changing definitions of data so compatible with graphing code I copied and pasted here
 
+min_date = data_total['minute'].min()
+max_date = data_total['minute'].max()
+
+date_range = st.slider(
+    "Select date range",
+    min_value=min_date,
+    max_value=max_date,
+    value=(min_date, max_date)   # default full range
+)
+
+# Filter data
+data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
 data['minute'] = pd.to_datetime(data['minute'])
 data_total = data.copy()
 data_sp = data[data['actual_sp'] == 'sp'].copy()
@@ -234,6 +246,8 @@ for df in list_df:
 
 # Regular graphing of variables with PAR for each chamber
 # Graphing zoomed CO2/PAR
+
+
 
 # plt.clf()
 fig, axes = plt.subplots(2,1)
