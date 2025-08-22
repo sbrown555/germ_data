@@ -202,7 +202,7 @@ csv_buffer = StringIO()
 data.to_csv(csv_buffer, index=False)
 csv_bytes = csv_buffer.getvalue().encode('utf-8')  # convert to bytes
 st.download_button(
-    label="Download Combined Dataset",
+    label=f"Download {file_name}",
     data=csv_bytes,
     file_name=file_name,
     mime='text/csv'
@@ -364,7 +364,6 @@ for var in variables:
 
 # SP and actual (comparing side by side the setpoint and the actual measurements)
 
-data_total = data.copy()
 variables = ['CO2', 'Temp', 'RH', 'PAR']
 var_low_bound = {'CO2':0, 'Temp':100, 'RH':25, 'PAR':0}
 var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
