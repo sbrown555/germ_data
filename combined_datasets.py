@@ -247,12 +247,13 @@ df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(go.line(x=df['minute'], y = df[variables[0]], name = variables[0]), secondary_y=False)
 fig.add_trace(go.line(x=df['minute'], y = df[variables[1]], name = variables[1]), secondary_y=True)
+st.plotly_chart(fig)
 
 
-fig = px.line(df, x = 'minute', y = 
-fig_temp = px.line(df_temp_grouped, x = "DateTime", y = "Temperature", color = 'group', title = 'Soil Temperature Sensors')
-fig_temp.update_layout(xaxis_title = 'Time', yaxis_title = 'Temperature_(C)', height = 600)
-st.plotly_chart(fig_temp)
+# fig = px.line(df, x = 'minute', y = 
+# fig_temp = px.line(df_temp_grouped, x = "DateTime", y = "Temperature", color = 'group', title = 'Soil Temperature Sensors')
+# fig_temp.update_layout(xaxis_title = 'Time', yaxis_title = 'Temperature_(C)', height = 600)
+# st.plotly_chart(fig_temp)
 
 
 
