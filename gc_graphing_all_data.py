@@ -208,13 +208,16 @@ st.download_button(
     mime='text/csv'
 )
 
+# Changing definitions of data so compatible with graphing code I copied and pasted here
+
 data['minute'] = pd.to_datetime(data['minute'])
+data_total = data.copy()
+data_sp = data[data['actual_sp'] == 'sp'].copy()
+data = data[data['actual_sp'] == 'actual'].copy()
 data_a = data[data['Chamber'] == 'A'].copy()
 data_sp_a = data_a[data_a['actual_sp'] == 'sp']
-data_a = data_a[data_a['actual_sp'] == 'actual']
 data_b = data[data['Chamber'] == 'B'].copy()
-data_sp_b = data_b[data_b['actual_sp'] == 'sp']
-data_b = data_b[data_b['actual_sp'] == 'actual']
+data_sp_b = data_sp[data_sp['Chamber'] == 'B'].copy()
 
 list_df = [data_a, data_b]
 
