@@ -211,8 +211,8 @@ st.download_button(
 # Changing definitions of data so compatible with graphing code I copied and pasted here
 data['minute'] = pd.to_datetime(data['minute'])
 data_total = data.copy()
-min_date = data['minute'].min()
-max_date = data['minute'].max()
+min_date = data['minute'].min().to_pydatetime()
+max_date = data['minute'].max().to_pydatetime()
 
 date_range = st.slider("Select date range", min_value=min_date, max_value=max_date, value=(min_date, max_date))
 # Filter data
