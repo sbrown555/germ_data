@@ -243,6 +243,7 @@ cols = ['minute', 'Chamber', 'actual_sp']+variables
 df = df[cols]
 group = ['minute', 'Chamber', 'actual_sp']
 df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
+df_grouped.reset_index(inplace=True)
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(go.line(x=df['minute'], y = df[variables[0]], name = variables[0]), secondary_y=False)
