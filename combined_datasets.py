@@ -239,7 +239,7 @@ if chamber != 'Both':
 if actual_sp != 'Both':
   df = df[df['actual_sp'] == actual_sp]
 
-cols = ['minute']+variables
+cols = ['minute', 'Chamber', 'actual_sp']+variables
 df = df[cols]
 group = ['minute', 'Chamber', 'actual_sp']
 df_grouped = df.groupby(group).agg({col:'mean' for col in variables})
