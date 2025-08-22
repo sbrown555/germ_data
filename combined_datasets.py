@@ -97,23 +97,44 @@ def read_drive_id(ID, cols = None):
     
 offset_dict = {'20250509_Chamber_Data': [pd.Timedelta(days=30), pd.Timedelta(days=1)], '20250519_Chamber_Data': [pd.Timedelta(days=0), pd.Timedelta(days=-30)], '20250522_Chamber_Data':[pd.Timedelta(days=30), pd.Timedelta(days=0)], '20250602_Chamber_Data':[pd.Timedelta(days=40), pd.Timedelta(days=0)], '20250616_Chamber_Data': [pd.Timedelta(days=30), pd.Timedelta(days=0)], '20250620_Chamber_Data': [pd.Timedelta(days=30), pd.Timedelta(days=0)], '20250625_Chamber_Data' : [pd.Timedelta(days=-30), pd.Timedelta(days=0)], '20250627_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250701_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250702_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250703_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250707_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250714_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250721_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250725_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250804_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250806_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250808_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)]}
   
+sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
+client_email = json.loads(sa_json_str)["client_email"]
 
-# Setting up access to google drive
-SERVICE_ACCOUNT_JSON = "/Users/sean/Documents/Sean/Lara Research/GC Data/operating-pod-469720-b9-214b1ebc73b3.json"
-with open(SERVICE_ACCOUNT_JSON) as f:
-    sa_info = json.load(f)
-client_email = sa_info["client_email"]
+# with open(SERVICE_ACCOUNT_JSON) as f:
+#     sa_info = json.load(f)
+# client_email = sa_info["client_email"]
 gauth = GoogleAuth()
+
+# Fully define settings dictionary
 gauth.settings = {
     'client_config_backend': 'service',
     'service_config': {
-        'client_json_file_path': SERVICE_ACCOUNT_JSON,
+        'client_json_file_path': None,
+        'client_json': sa_json_str,
         'client_user_email': client_email
     },
     'oauth_scope': ['https://www.googleapis.com/auth/drive']
 }
+
 gauth.ServiceAuth()
 drive = GoogleDrive(gauth)
+
+# # Setting up access to google drive
+# SERVICE_ACCOUNT_JSON = "/Users/sean/Documents/Sean/Lara Research/GC Data/operating-pod-469720-b9-214b1ebc73b3.json"
+# with open(SERVICE_ACCOUNT_JSON) as f:
+#     sa_info = json.load(f)
+# client_email = sa_info["client_email"]
+# gauth = GoogleAuth()
+# gauth.settings = {
+#     'client_config_backend': 'service',
+#     'service_config': {
+#         'client_json_file_path': SERVICE_ACCOUNT_JSON,
+#         'client_user_email': client_email
+#     },
+#     'oauth_scope': ['https://www.googleapis.com/auth/drive']
+# }
+# gauth.ServiceAuth()
+# drive = GoogleDrive(gauth)
 
 # Looking through folder with processed data and finding that most recent date
 processed_folder_id = '11x8zo1ZQYU_MuFh2A36f4TmGYaojEnpZ'
