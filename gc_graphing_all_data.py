@@ -209,21 +209,15 @@ st.download_button(
 )
 
 # Changing definitions of data so compatible with graphing code I copied and pasted here
-
-min_date = data_total['minute'].min()
-max_date = data_total['minute'].max()
-
-date_range = st.slider(
-    "Select date range",
-    min_value=min_date,
-    max_value=max_date,
-    value=(min_date, max_date)   # default full range
-)
-
-# Filter data
-data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
 data['minute'] = pd.to_datetime(data['minute'])
 data_total = data.copy()
+min_date = data['minute'].min()
+max_date = data['minute'].max()
+
+date_range = st.slider("Select date range", min_value=min_date, max_value=max_date, value=(min_date, max_date))
+# Filter data
+data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
+
 data_sp = data[data['actual_sp'] == 'sp'].copy()
 data = data[data['actual_sp'] == 'actual'].copy()
 data_a = data[data['Chamber'] == 'A'].copy()
