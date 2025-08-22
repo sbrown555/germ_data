@@ -189,6 +189,8 @@ for date in sorted(file_dict.keys()):
   data_new = data_new[data_new['minute'] > last_processing_time]
   data = pd.concat([data_new, data])
 
+df = data.copy()
+
 
 # Check to see if there is already an up-to-date processed file, and if not save new processed file
 file_name = f"gc_data_processed_{current_date}.csv"
@@ -199,7 +201,7 @@ if not duplicate_check:
 else:
   st.write('No new data')
 csv_buffer = StringIO()
-data.to_csv(csv_buffer, index=False)
+df.to_csv(csv_buffer, index=False)
 csv_bytes = csv_buffer.getvalue().encode('utf-8')  # convert to bytes
 st.download_button(
     label=f"Download {file_name}",
@@ -244,7 +246,7 @@ for df in list_df:
 
 
 # plt.clf()
-fig, axes = plt.subplots(2,1)
+fig, axes = plt.subplots(2,1, figsize = (12,6)))
 
 ax1 = axes[0]
 ax1.plot(data_a['minute'], data_a['CO2'], 'b-', label='CO2')
