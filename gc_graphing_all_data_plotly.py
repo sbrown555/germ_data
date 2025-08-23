@@ -190,7 +190,7 @@ for date in sorted(file_dict.keys()):
   # With data downloaded individually, the above cause some duplicate rows possibly, although it doesn't really make sense to me why
   # data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
 
-df = data.copy()
+data_to_download = data.copy()
 
 
 # Check to see if there is already an up-to-date processed file, and if not save new processed file
@@ -202,7 +202,7 @@ if not duplicate_check:
 else:
   st.write('No new data')
 csv_buffer = StringIO()
-df.to_csv(csv_buffer, index=False)
+data_to_download.to_csv(csv_buffer, index=False)
 csv_bytes = csv_buffer.getvalue().encode('utf-8')  # convert to bytes
 st.download_button(
     label=f"Download {file_name}",
@@ -221,33 +221,16 @@ data = data.sort_values('minute')
 min_date = data['minute'].min().to_pydatetime()
 max_date = data['minute'].max().to_pydatetime()
 
-# Sliders and Toggles
-date_range = st.slider("Select date range", min_value=min_date, max_value=max_date, value=(min_date, max_date))
-date_low_limit = date_range[0]
-date_upper_limit = date_range[1]
+# # Sliders and Toggles
+# date_range = st.slider("Select date range", min_value=min_date, max_value=max_date, value=(min_date, max_date))
+# date_low_limit = date_range[0]
+# date_upper_limit = date_range[1]
 
-co2_range = st.slider('Select CO2 range: ', min_value=0, max_value=1500, value=(350, 800), key='co2_slider')
-rh_range = st.slider('Select RH range: ', min_value=0, max_value = 100, value=(1,100), key='rh_slider')
-par_range = st.slider('Select PAR range: ', min_value = 0, max_value = 1500, value=(0,1500), key = 'par_slider')
-temp_range = st.slider('Select Temperature range: ', min_value = 0, max_value = 500, value=(150,300), key='temp_slider')
-lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range}
-
-# for chamber in df["Chamber"].unique():
-#   # d_chamber = df[df["Chamber"] == chamber]
-#   fig = make_subplots(specs=[[{"secondary_y": True}]])
-#   fig.add_trace(go.Scatter(x=df['minute'], y = df['CO2'], name = 'ppm', mode='lines'), secondary_y=False)
-#   fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
-# pio.renderers.default = "browser"
-
-# def graph_plotly_var_par(df, chamber, actual, var):
-#   fig = make_subplots(specs=[[{"secondary_y": True}]])
-#   df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
-#   fig.add_trace(go.Scatter(x=df['minute'], y = df[var], name = var, mode='lines'), secondary_y=False)
-#   fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
-#   # pio.renderers.default = "browser"
-#   st.plotly_chart(fig)
-
-units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
+# co2_range = st.slider('Select CO2 range: ', min_value=0, max_value=1500, value=(350, 800), key='co2_slider')
+# rh_range = st.slider('Select RH range: ', min_value=0, max_value = 100, value=(1,100), key='rh_slider')
+# par_range = st.slider('Select PAR range: ', min_value = 0, max_value = 1500, value=(0,1500), key = 'par_slider')
+# temp_range = st.slider('Select Temperature range: ', min_value = 0, max_value = 500, value=(150,300), key='temp_slider')
+# lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range}
 
 def chamber_actual_check(chamber, actual):
   if chamber == 'A':
@@ -264,6 +247,7 @@ def chamber_actual_check(chamber, actual):
     st.error('Please specify if you want to graph actual or setpoint values')
   return [co2_treatment, actual_sp]
 
+units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
 def plotly_graph(data1, data2, var1, var2, color1='blue', color2='red', title=None, x_range=None, units=units):
   fig = make_subplots(specs=[[{"secondary_y": True}]])
   fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=var1, mode='lines', line=dict(color = color1)),secondary_y=False)
@@ -280,167 +264,32 @@ def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, un
   title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_actual[0]} Chamber'
   plotly_graph(df, df, var1, var2, x_range=x_range, units=units, title=title)
 
-
-
-
-
-
-  
-# def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units):
-#   chamber_actual_check(chamber_actual)
-#   df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
-#   fig = make_subplots(specs=[[{"secondary_y": True}]])
-#   fig.add_trace(go.Scatter(x=df['minute'], y=df[var1], name=var1, mode='lines', line=dict(color = 'blue')),secondary_y=False)
-#   fig.add_trace(go.Scatter(x=df['minute'], y=df[var2], name=var2, mode='lines', line=dict(color='red')),secondary_y=True)
-#   fig.update_xaxes(title_text="Time", range=x_range)
-#   fig.update_yaxes(title_text=f'{var1} {(units[var1])}', secondary_y=False)
-#   fig.update_yaxes(title_text=f'{var2} ({units[var2]})', secondary_y=True)
-#   fig.update_layout(title=f'{actual_sp} {var1} and {var2} in {co2_treatment} Chamber')
-#   st.plotly_chart(fig, use_container_width=True)
-  
+# Graphing variables with PAR
 variables = ['CO2', 'RH', 'Temp']
 for var in variables:
   for chamber in ['A','B']:
     graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date])
 
-
-# Filter data
-data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
-data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
-data = data.iloc[:-1]
-
-data_total = data.copy()
-data_sp = data[data['actual_sp'] == 'sp'].copy()
-data = data[data['actual_sp'] == 'actual'].copy()
-data_a = data[data['Chamber'] == 'A'].copy()
-data_sp_a = data_a[data_a['actual_sp'] == 'sp']
-data_b = data[data['Chamber'] == 'B'].copy()
-data_sp_b = data_sp[data_sp['Chamber'] == 'B'].copy()
-
-list_df = [data_a, data_b]
-
-for df in list_df:
-  df.drop('Chamber', axis=1, inplace=True)
-
-# variables = ['CO2', 'Temp', 'RH', 'PAR']
-# cols = ['minute'] + variables
-# data_a = data_a[cols]
-# data_b = data_b[cols]
-# data_sp_a = data_sp_a[cols]
-# data_sp_b = data_sp_b[cols]
-
-
-# Regular graphing of variables with PAR for each chamber
-# Graphing zoomed CO2/PAR
-
-
-
-# plt.clf()
-fig, axes = plt.subplots(2,1)
-# figsize = (8,4.8)
-
-ax1 = axes[0]
-ax1.plot(data_a['minute'], data_a['CO2'], 'b-', label='CO2')
-ax1.set_ylabel('CO2', color = 'b')
-ax1.tick_params(axis='y', labelcolor='b')
-ax1.set_ylim(680, 800)
-
-ax2=ax1.twinx()
-ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
-ax2.set_ylabel('PAR', color = 'r')
-ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
-ax2.set_ylim(0,1500)
-# ax2.spines["right"].set_position(("outward", 60))  # 60 pts away from ax1
-
-
-ax3 = axes[1]
-ax3.plot(data_b['minute'], data_b['CO2'], 'b-', label = 'CO2')
-ax3.set_ylabel('CO2', color = 'b')
-ax3.set_xlabel('date')
-ax3.tick_params(axis='y', labelcolor = 'b')
-ax3.set_ylim(400, 500)
-
-ax4 = ax3.twinx()
-ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
-ax4.set_ylabel('PAR', color = 'r')
-ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
-ax4.set_ylim(0,1500)
-# ax4.spines["right"].set_position(("outward", 60))  # 60 pts away from ax1
-
-date_format = mdates.DateFormatter('%m/%d')
-
-for ax in axes:
-  ax.xaxis.set_major_formatter(date_format)
-  
-axes[0].set_title('Elevated CO2 Chamber (HiC): 650-750 ppm')
-axes[1].set_title('Ambient CO2 Chamber (LowC): 400-500 ppm')
-# fig.suptitle('CO2 and PAR in Both Chambers')
-  
-# axes[0].set_ylim(650, 750)
-# axes[1].set_ylim(400, 500)
-
-fig.tight_layout()
-st.pyplot(fig)
-plt.close(fig)
-
-# fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/co2_par_zoomed_in_{current_date}{additional_file_info}.png'
-# if save_figure == True:
-  # plt.savefig(fig_name)
-
-# Graphing all variables with PAR. Not zoomed in
-variables = ['CO2','RH','Temp']
-for var in variables:
-  fig, axes = plt.subplots(2,1)
-  # var_low_bound_lowc = 350
-  # var_up_bound_lowc = 900
-  # var_low_bound_hic = 350
-  # var_up_bound_hic = 900
-  # ax1.set_ylim(var_low_bound_hic, var_up_bound_hic)
-  # ax3.set_ylim(var_low_bound_lowc, var_up_bound_lowc)
-  ax1 = axes[0]
-  ax1.plot(data_a['minute'], data_a[var], 'b-', label=var)
-  ax1.set_ylabel(var, color = 'b')
-  ax1.tick_params(axis='y', labelcolor='b')
-  ax1.set_ylim(lim_dict[var][0], lim_dict[var][1])
-  ax2=ax1.twinx()
-  ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
-  ax2.set_ylabel('PAR', color = 'r')
-  ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
-  ax2.set_ylim(lim_dict['PAR'][0], lim_dict['PAR'][1])
-  ax3 = axes[1]
-  ax3.plot(data_b['minute'], data_b[var], 'b-', label = var)
-  ax3.set_ylabel(var, color = 'b')
-  ax3.set_xlabel('date')
-  ax3.tick_params(axis='y', labelcolor = 'b')
-  ax3.set_ylim(lim_dict[var][0], lim_dict[var][1])
-  ax4 = ax3.twinx()
-  ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
-  ax4.set_ylabel('PAR', color = 'r')
-  ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
-  ax4.set_ylim(lim_dict['PAR'][0], lim_dict['PAR'][1])
-  date_format = mdates.DateFormatter('%m/%d')
-  for ax in axes:
-    ax.xaxis.set_major_formatter(date_format)
-    axes[0].set_title(f'{var} Elevated CO2 Chamber (HiC)')
-    axes[1].set_title(f'{var} Ambient CO2 Chamber (LowC)')
-    # fig.suptitle(f'{var} and PAR in Both Chambers')
-    # axes[0].set_ylim(650, 750)
-    # axes[1].set_ylim(400, 500)
-  fig.tight_layout()
-  st.pyplot(fig)
-  # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_par_{current_date}{additional_file_info}.png'
-  # if save_figure == True:
-    # plt.savefig(fig_name)
-  plt.close(fig)
-  
-
-# SP and actual conditionals comparison
-
 # SP vs actual (comparing setpoint and actual variables for each chamber)
+def graph_actual_sp(df, var, chamber, color1='blue', color2='orange', x_range=None):
+  df = df[df['Chamber'] == chamber]
+  data1=df[df['actual_sp'] == 'actual']
+  data2 = df[df['actual_sp'] == 'sp']
+  title = f'Actual and Set Point of {var} in {chamber_actual[0]} Chamber'
+  plotly_graph(data1, data2, var, var, color1=color1, color2=color2, title=title, x_range=x_range)
+
+variables = ['CO2', 'RH', 'Temp', 'PAR']
+for var in variables:
+  for chamber in ['A', 'B']:
+    graph_actual_sp(data, chamber)
+
+
+
+
 variables = ['CO2', 'Temp', 'RH', 'PAR']
-var_low_bound = {'CO2':0, 'Temp':100, 'RH':25, 'PAR':0}
-var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
-units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
+# var_low_bound = {'CO2':0, 'Temp':100, 'RH':25, 'PAR':0}
+# var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
+# units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
 # date_low_limit = pd.to_datetime('2025-05-01')
 # date_upper_limit = pd.to_datetime('2025-08-08')
 date_format = mdates.DateFormatter('%m/%d')
