@@ -247,18 +247,18 @@ lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range
 #   # pio.renderers.default = "browser"
 #   st.plotly_chart(fig)
 
-def graph_plotly_var_par(df, chamber, actual, var):
+def graph_plotly_var_par(df, chamber, actual, var, x_range=None):
     df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Scatter(x=df['minute'], y=df[var], name=var, mode='lines', line=dict(color = 'blue')),secondary_y=False)
     fig.add_trace(go.Scatter(x=df['minute'], y=df['PAR'], name='PAR (umol)', mode='lines', line=dict(color='red')),secondary_y=True)
-    fig.update_xaxes(title_text="Time")
+    fig.update_xaxes(title_text="Time", range=x_range)
     fig.update_yaxes(title_text=var, secondary_y=False)
     fig.update_yaxes(title_text="PAR (umol)", secondary_y=True)
     st.plotly_chart(fig, use_container_width=True)
   
 for chamber in data['Chamber'].unique():
-  graph_plotly_var_par(data, chamber, True, 'CO2')
+  graph_plotly_var_par(data, chamber, True, 'CO2', x_range = [min_date, max_date])
 
 
 # Filter data
