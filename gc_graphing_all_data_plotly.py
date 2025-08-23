@@ -291,17 +291,16 @@ for var in variables:
     graph_actual_sp(data, var, chamber)
 
 # SP and actual (comparing side by side the setpoint and the actual measurements)
-variables = ['CO2', 'RH', 'Temp', 'PAR']
 
 def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None):
-  actual_sp = chamber_actual_check(actual = is_actual)[-1]
-  st.write(actual_sp)
-  df=df[df['actual_sp'] == actual_sp]
+  actual = chamber_actual_check(actual = is_actual)[-1]
+  df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
   df_a = df[df['Chamber'] == 'A']
   df_b = df[df['Chamber'] == 'B']
   title = f'{var} in Both Chambers, {actual_sp}'
   plotly_graph(df_a, df_b, var, var, colors=colors, x_range=x_range, title=title)
 
+variables = ['CO2', 'RH', 'Temp', 'PAR']
 for var in variables:
   for is_actual in [True, False]:
     graph_chamber(data, var, is_actual)
