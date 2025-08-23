@@ -239,7 +239,7 @@ lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range
 #   fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
 # pio.renderers.default = "browser"
 
-def graph_plotly_var_par(df, chamber, actual, var)
+def graph_plotly_var_par(df, chamber, actual, var):
   fig = make_subplots(specs=[[{"secondary_y": True}]])
   df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
   fig.add_trace(go.Scatter(x=df['minute'], y = df[var], name = var, mode='lines'), secondary_y=False)
