@@ -385,14 +385,14 @@ for var in variables:
   axes[0].xaxis.set_major_formatter(date_format)
   axes[0].set_title(f'{var} Actual in Both Chambers')
   axes[0].legend(title = 'A=HiC, B=LowC')
-  axes[0].set_ylim(var_low_bound[var], var_upper_bound[var])
+  axes[0].set_ylim(lim_dict[var][0], lim_dict[var][1])
   axes[0].set_xlim(date_low_limit, date_upper_limit)
   for chamber, group in data_sp.groupby('Chamber'):
     axes[1].plot(group['minute'], group[var], label = chamber)
   axes[1].xaxis.set_major_formatter(date_format)
   axes[1].set_title(f'{var} Set Point in Both Chambers')
   axes[1].legend(title = 'A=HiC, B=LowC')
-  axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
+  axes[1].set_ylim(lim_dict[var][0], lim_dict[var][1])
   axes[1].set_xlim(date_low_limit, date_upper_limit)
   plt.subplots_adjust(hspace=0.5)  
   fig.tight_layout()
@@ -408,8 +408,8 @@ variables = ['CO2', 'Temp', 'RH', 'PAR']
 var_low_bound = {'CO2':0, 'Temp':100, 'RH':25, 'PAR':0}
 var_upper_bound = {'CO2':1000, 'Temp':300, 'RH':90, 'PAR':1500}
 units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
-date_low_limit = pd.to_datetime('2025-05-01')
-date_upper_limit = pd.to_datetime('2025-08-08')
+# date_low_limit = pd.to_datetime('2025-05-01')
+# date_upper_limit = pd.to_datetime('2025-08-08')
 date_format = mdates.DateFormatter('%m/%d')
 for var in variables:
   fig, axes = plt.subplots(2,1)
@@ -418,14 +418,14 @@ for var in variables:
   axes[0].xaxis.set_major_formatter(date_format)
   axes[0].set_title(f'{var} Set Point and Actual in HiC Chamber (A)')
   axes[0].legend()
-  axes[0].set_ylim(var_low_bound[var], var_upper_bound[var])
+  axes[0].set_ylim(lim_dict[var][0], lim_dict[var][1])
   axes[0].set_xlim(date_low_limit, date_upper_limit)
   for actual_sp, group in data_total[data_total['Chamber'] == 'B'].groupby('actual_sp'):
     axes[1].plot(group['minute'], group[var], label = actual_sp)
   axes[1].xaxis.set_major_formatter(date_format)
   axes[1].set_title(f'{var} Set Point and Actual in LowC Chamber (B)')
   axes[1].legend()
-  axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
+  axes[1].set_ylim(lim_dict[var][0], lim_dict[var][1])
   axes[1].set_xlim(date_low_limit, date_upper_limit)
   plt.subplots_adjust(hspace=0.5)
   fig.tight_layout()
