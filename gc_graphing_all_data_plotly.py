@@ -250,18 +250,32 @@ lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range
 units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
 
 def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units):
+  if chamber == 'A':
+    co2_treatment = 'HiC'
+  elif chamber == 'B':
+    co2_treatment = 'LowC'
+  else:
+    st.error('Please select a chamber: A or B')
+  if actual == True:
+    actual_sp = 'Actual'
+  elif actual == False:
+    actual_sp == 'Set Point'
+  else:
+    st.error('Please specify if you want to graph actual or setpoint values')
   df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
   fig = make_subplots(specs=[[{"secondary_y": True}]])
   fig.add_trace(go.Scatter(x=df['minute'], y=df[var1], name=var1, mode='lines', line=dict(color = 'blue')),secondary_y=False)
   fig.add_trace(go.Scatter(x=df['minute'], y=df[var2], name=var2, mode='lines', line=dict(color='red')),secondary_y=True)
   fig.update_xaxes(title_text="Time", range=x_range)
-  fig.update_yaxes(title_text=f'{var1} {(units[var2])}', secondary_y=False)
+  fig.update_yaxes(title_text=f'{var1} {(units[var1])}', secondary_y=False)
   fig.update_yaxes(title_text=f'{var2} ({units[var2]})', secondary_y=True)
-  fig.update_layout(title='f{var1} and {var2}')
+  fig.update_layout(title=f'{actual_sp} {var1} and {var2} in {co2_treatment} Chamber')
   st.plotly_chart(fig, use_container_width=True)
   
-for chamber in data['Chamber'].unique():
-  graph_plotly_var_par(data, chamber, True, 'CO2', x_range = [min_date, max_date])
+variables = ['CO2', 'RH', 'Temp']
+for var in variables:
+  for chamber in data['Chamber'].unique():
+    graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date])
 
 
 # Filter data
