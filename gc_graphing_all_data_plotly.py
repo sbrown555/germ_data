@@ -294,7 +294,7 @@ for var in variables:
 variables = ['CO2', 'RH', 'Temp', 'PAR']
 
 def graph_chamber(df, var, actual_sp, colors = ['purple', 'green'], x_range=None):
-  chamber_actual = chamber_actual_check(actual_sp = actual_sp)
+  chamber_actual = chamber_actual_check(actual = actual_sp)
   df=df[df['actual_sp'] == actual_sp]
   df_a = df[df['Chamber'] == 'A']
   df_b = df[df['Chamber'] == 'B']
