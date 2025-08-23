@@ -264,7 +264,7 @@ def chamber_actual_check(chamber, actual):
     st.error('Please specify if you want to graph actual or setpoint values')
   return [co2_treatment, actual_sp]
 
-def plotly_graph(data1, data2, var1, var2, color1='blue', color2='red', title=None x_range=None, units=units):
+def plotly_graph(data1, data2, var1, var2, color1='blue', color2='red', title=None, x_range=None, units=units):
   fig = make_subplots(specs=[[{"secondary_y": True}]])
   fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=var1, mode='lines', line=dict(color = 'color1')),secondary_y=False)
   fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=var2, mode='lines', line=dict(color='color2')),secondary_y=True)
