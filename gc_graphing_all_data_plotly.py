@@ -254,7 +254,7 @@ def chamber_actual_check(chamber=None, actual=None):
 units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
 def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = [var1, var2], title=None, x_range=None, units=units):
   fig = make_subplots(specs=[[{"secondary_y": True}]])
-  fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=var1, mode='lines', line=dict(color = colors[0)),secondary_y=False)
+  fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=var1, mode='lines', line=dict(color = colors[0]),secondary_y=False)
   fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=var2, mode='lines', line=dict(color = colors[1])),secondary_y=True)
   fig.update_xaxes(title_text="Time", range=x_range)
   fig.update_yaxes(title_text=f'{var1} {(units[var1])}', secondary_y=False)
