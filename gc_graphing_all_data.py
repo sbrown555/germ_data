@@ -229,21 +229,26 @@ date_upper_limit = date_range[1]
 co2_range = st.slider('Select CO2 range: ', min_value=0, max_value=1500, value=(350, 800), key='co2_slider')
 rh_range = st.slider('Select RH range: ', min_value=0, max_value = 100, value=(1,100), key='rh_slider')
 par_range = st.slider('Select PAR range: ', min_value = 0, max_value = 1500, value=(0,1500), key = 'par_slider')
-temp_range = st.slider('Select Temperature range: ', min_value = 0, max_value = 50, value=(15,30), key='temp_slider')
+temp_range = st.slider('Select Temperature range: ', min_value = 0, max_value = 500, value=(150,300), key='temp_slider')
 lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range}
 
-for chamber in df["Chamber"].unique():
-  # d_chamber = df[df["Chamber"] == chamber]
-  fig = make_subplots(specs=[[{"secondary_y": True}]])
-  fig.add_trace(go.Scatter(x=df['minute'], y = df['CO2'], name = 'ppm', mode='lines'), secondary_y=False)
-  fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
-pio.renderers.default = "browser"
+# for chamber in df["Chamber"].unique():
+#   # d_chamber = df[df["Chamber"] == chamber]
+#   fig = make_subplots(specs=[[{"secondary_y": True}]])
+#   fig.add_trace(go.Scatter(x=df['minute'], y = df['CO2'], name = 'ppm', mode='lines'), secondary_y=False)
+#   fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
+# pio.renderers.default = "browser"
 
 def graph_plotly_var_par(df, chamber, actual, var)
   fig = make_subplots(specs=[[{"secondary_y": True}]])
+  df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
   fig.add_trace(go.Scatter(x=df['minute'], y = df[var], name = var, mode='lines'), secondary_y=False)
   fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
-  pio.renderers.default = "browser"
+  # pio.renderers.default = "browser"
+  st.plotly_chart(fig)
+
+for chamber in data['Chamber'].unique():
+  graph_plotly_var_par(data, chamber, True, 'CO2')
 
 
 
