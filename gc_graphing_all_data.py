@@ -227,7 +227,16 @@ data = data.sort_values('minute')
 min_date = data['minute'].min().to_pydatetime()
 max_date = data['minute'].max().to_pydatetime()
 
+# Sliders and Toggles
 date_range = st.slider("Select date range", min_value=min_date, max_value=max_date, value=(min_date, max_date))
+date_low_limit = date_range[0]
+date_upper_limit = date_range[1]
+
+co2_range = st.slider('Select CO2 range: ', min_value=0, max_value=1500, value=(350, 800), key='co2_slider')
+
+rh_range = st.slider('Select RH range: ', min_value=0, max_value = 100, value=(1,100), key='rh_slider')
+
+
 # Filter data
 data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
 data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
@@ -375,14 +384,14 @@ for var in variables:
   axes[0].set_title(f'{var} Actual in Both Chambers')
   axes[0].legend(title = 'A=HiC, B=LowC')
   axes[0].set_ylim(var_low_bound[var], var_upper_bound[var])
-  # axes[0].set_xlim(date_low_limit, date_upper_limit)
+  axes[0].set_xlim(date_low_limit, date_upper_limit)
   for chamber, group in data_sp.groupby('Chamber'):
     axes[1].plot(group['minute'], group[var], label = chamber)
   axes[1].xaxis.set_major_formatter(date_format)
   axes[1].set_title(f'{var} Set Point in Both Chambers')
   axes[1].legend(title = 'A=HiC, B=LowC')
   axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
-  # axes[1].set_xlim(date_low_limit, date_upper_limit)
+  axes[1].set_xlim(date_low_limit, date_upper_limit)
   plt.subplots_adjust(hspace=0.5)  
   fig.tight_layout()
   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp_vs_actual_{current_date}{additional_file_info}.png'
@@ -408,14 +417,14 @@ for var in variables:
   axes[0].set_title(f'{var} Set Point and Actual in HiC Chamber (A)')
   axes[0].legend()
   axes[0].set_ylim(var_low_bound[var], var_upper_bound[var])
-  # axes[0].set_xlim(date_low_limit, date_upper_limit)
+  axes[0].set_xlim(date_low_limit, date_upper_limit)
   for actual_sp, group in data_total[data_total['Chamber'] == 'B'].groupby('actual_sp'):
     axes[1].plot(group['minute'], group[var], label = actual_sp)
   axes[1].xaxis.set_major_formatter(date_format)
   axes[1].set_title(f'{var} Set Point and Actual in LowC Chamber (B)')
   axes[1].legend()
   axes[1].set_ylim(var_low_bound[var], var_upper_bound[var])
-  # axes[1].set_xlim(date_low_limit, date_upper_limit)
+  axes[1].set_xlim(date_low_limit, date_upper_limit)
   plt.subplots_adjust(hspace=0.5)
   fig.tight_layout()
   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/{var}_sp&actual_{current_date}.png'
@@ -457,7 +466,7 @@ for var in variables:
 #   ax.set_title(f'{var} Actual - Set Point in Both Chambers')
 #   ax.legend(title = 'A=HiC, B=LowC')
 #   ax.set_ylim(var_low_bound[var], var_upper_bound[var])
-#   # ax.set_xlim(date_low_limit, date_upper_limit)
+#   ax.set_xlim(date_low_limit, date_upper_limit)
 #   # fig_name = f'/Users/sean/Documents/Sean/Lara Research/GC Data/GC Data Graphs/difference_between sp_and_actual_{var}_{current_date}{additional_file_info}.png'
 #   # if save_figure == True:
 #   #   plt.savefig(fig_name)
