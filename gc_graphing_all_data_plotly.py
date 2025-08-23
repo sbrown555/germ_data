@@ -274,7 +274,7 @@ def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, un
 variables = ['CO2', 'RH', 'Temp']
 for var in variables:
   for chamber in ['A','B']:
-    graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date], key=f'{var}_with_{PAR}')
+    graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date], key=f'{var}_with_PAR')
 
 # SP vs actual (comparing setpoint and actual variables for each chamber)
 def graph_actual_sp(df, var, chamber, colors = ['blue', 'orange'], x_range=None, key=None):
