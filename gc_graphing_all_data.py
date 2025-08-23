@@ -105,13 +105,7 @@ offset_dict = {'20250509_Chamber_Data': [pd.Timedelta(days=30), pd.Timedelta(day
   
 sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
 client_email = json.loads(sa_json_str)["client_email"]
-
-# with open(SERVICE_ACCOUNT_JSON) as f:
-#     sa_info = json.load(f)
-# client_email = sa_info["client_email"]
 gauth = GoogleAuth()
-
-# Fully define settings dictionary
 gauth.settings = {
     'client_config_backend': 'service',
     'service_config': {
@@ -121,10 +115,10 @@ gauth.settings = {
     },
     'oauth_scope': ['https://www.googleapis.com/auth/drive']
 }
-
 gauth.ServiceAuth()
 drive = GoogleDrive(gauth)
 
+# # Below works on local computer. Above works on streamlit
 # # Setting up access to google drive
 # SERVICE_ACCOUNT_JSON = "/Users/sean/Documents/Sean/Lara Research/GC Data/operating-pod-469720-b9-214b1ebc73b3.json"
 # with open(SERVICE_ACCOUNT_JSON) as f:
@@ -237,6 +231,22 @@ rh_range = st.slider('Select RH range: ', min_value=0, max_value = 100, value=(1
 par_range = st.slider('Select PAR range: ', min_value = 0, max_value = 1500, value=(0,1500), key = 'par_slider')
 temp_range = st.slider('Select Temperature range: ', min_value = 0, max_value = 50, value=(15,30), key='temp_slider')
 lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range}
+
+for chamber in df["Chamber"].unique():
+  # d_chamber = df[df["Chamber"] == chamber]
+  fig = make_subplots(specs=[[{"secondary_y": True}]])
+  fig.add_trace(go.Scatter(x=df['minute'], y = df['CO2'], name = 'ppm', mode='lines'), secondary_y=False)
+  fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
+pio.renderers.default = "browser"
+
+def graph_plotly_var_par(df, chamber, actual, var)
+  fig = make_subplots(specs=[[{"secondary_y": True}]])
+  fig.add_trace(go.Scatter(x=df['minute'], y = df[var], name = var, mode='lines'), secondary_y=False)
+  fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
+  pio.renderers.default = "browser"
+
+
+
 
 # Filter data
 data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
