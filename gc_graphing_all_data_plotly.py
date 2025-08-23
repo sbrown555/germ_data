@@ -252,7 +252,7 @@ def chamber_actual_check(chamber=None, actual=None):
   return [co2_treatment, actual_sp]
 
 units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
-def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, title=None, x_range=None, units=units):
+def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, title=None, x_range=None, units=units, key=None):
   if axis_labels is None:
     axis_labels = [var1, var2]
   fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -262,49 +262,49 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.update_yaxes(title_text=f'{var1} {(units[var1])}', secondary_y=False)
   fig.update_yaxes(title_text=f'{var2} ({units[var2]})', secondary_y=True)
   fig.update_layout(title=title)
-  st.plotly_chart(fig, use_container_width=True)
+  st.plotly_chart(fig, use_container_width=True, key=key)
 
-def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units):
+def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units, key=None):
   chamber_actual= chamber_actual_check(chamber, actual)
   df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
   title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_actual[0]} Chamber'
-  plotly_graph(df, df, var1, var2, x_range=x_range, units=units, title=title)
+  plotly_graph(df, df, var1, var2, x_range=x_range, units=units, title=title, key=key)
 
 # Graphing variables with PAR
 variables = ['CO2', 'RH', 'Temp']
 for var in variables:
   for chamber in ['A','B']:
-    graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date])
+    graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date], key=f'{var}_with_{PAR}')
 
 # SP vs actual (comparing setpoint and actual variables for each chamber)
-def graph_actual_sp(df, var, chamber, colors = ['blue', 'orange'], x_range=None):
+def graph_actual_sp(df, var, chamber, colors = ['blue', 'orange'], x_range=None, key=None):
   chamber_name = chamber_actual_check(chamber, True)[0]
   df = df[df['Chamber'] == chamber]
   data1=df[df['actual_sp'] == 'actual']
   data2 = df[df['actual_sp'] == 'sp']
   title = f'Actual and Set Point of {var} in {chamber_name} Chamber'
-  plotly_graph(data1, data2, var, var, colors = colors, axis_labels = ['actual', 'setpoint'], title=title, x_range=x_range)
+  plotly_graph(data1, data2, var, var, colors = colors, axis_labels = ['actual', 'setpoint'], title=title, x_range=x_range, key=key)
 
 variables = ['CO2', 'RH', 'Temp', 'PAR']
 for var in variables:
   for chamber in ['A', 'B']:
-    graph_actual_sp(data, var, chamber)
+    graph_actual_sp(data, var, chamber, key=f'{var}_actual_sp_comparison_chamber={chamber}')
 
 # SP and actual (comparing side by side the setpoint and the actual measurements)
 
-def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None):
+def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None, key=None):
   actual = chamber_actual_check(actual = is_actual)[-1]
   df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
   df_a = df[df['Chamber'] == 'A']
   df_b = df[df['Chamber'] == 'B']
   actual_title = ('Actual' if actual else 'Set Point')
   title = f'{var} in Both Chambers, {actual_title}'
-  plotly_graph(df_a, df_b, var, var, colors=colors, x_range=x_range, title=title)
+  plotly_graph(df_a, df_b, var, var, colors=colors, x_range=x_range, title=title, key=key)
 
 variables = ['CO2', 'RH', 'Temp', 'PAR']
 for var in variables:
   for is_actual in [True, False]:
-    graph_chamber(data, var, is_actual)
+    graph_chamber(data, var, is_actual, key=f'{var}_chamber_comparison_actual={is_actual}')
  
 
                
