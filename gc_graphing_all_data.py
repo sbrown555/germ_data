@@ -250,8 +250,8 @@ lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range
 def graph_plotly_var_par(df, chamber, actual, var):
     df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
     fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.add_trace(go.Scatter(x=df['minute'], y=df[var], name=var, mode='lines'),secondary_y=False)
-    fig.add_trace(go.Scatter(x=df['minute'], y=df['PAR'], name='PAR (umol)', mode='lines'),secondary_y=True)
+    fig.add_trace(go.Scatter(x=df['minute'], y=df[var], name=var, mode='lines', line=dict(color = 'blue')),secondary_y=False)
+    fig.add_trace(go.Scatter(x=df['minute'], y=df['PAR'], name='PAR (umol)', mode='lines', line=dict(color='red')),secondary_y=True)
     fig.update_xaxes(title_text="Time")
     fig.update_yaxes(title_text=var, secondary_y=False)
     fig.update_yaxes(title_text="PAR (umol)", secondary_y=True)
