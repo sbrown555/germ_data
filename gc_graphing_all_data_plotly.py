@@ -297,7 +297,8 @@ def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None
   df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
   df_a = df[df['Chamber'] == 'A']
   df_b = df[df['Chamber'] == 'B']
-  title = f'{var} in Both Chambers, {actual_sp}'
+  actual_title = ('Actual' if actual else 'Set Point')
+  title = f'{var} in Both Chambers, {actual_title}'
   plotly_graph(df_a, df_b, var, var, colors=colors, x_range=x_range, title=title)
 
 variables = ['CO2', 'RH', 'Temp', 'PAR']
