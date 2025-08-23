@@ -259,15 +259,15 @@ def chamber_actual_check(chamber, actual):
   if actual == True:
     actual_sp = 'Actual'
   elif actual == False:
-    actual_sp == 'Set Point'
+    actual_sp = 'Set Point'
   else:
     st.error('Please specify if you want to graph actual or setpoint values')
   return [co2_treatment, actual_sp]
 
 def plotly_graph(data1, data2, var1, var2, color1='blue', color2='red', title=None, x_range=None, units=units):
   fig = make_subplots(specs=[[{"secondary_y": True}]])
-  fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=var1, mode='lines', line=dict(color = 'color1')),secondary_y=False)
-  fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=var2, mode='lines', line=dict(color='color2')),secondary_y=True)
+  fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=var1, mode='lines', line=dict(color = color1)),secondary_y=False)
+  fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=var2, mode='lines', line=dict(color=color2)),secondary_y=True)
   fig.update_xaxes(title_text="Time", range=x_range)
   fig.update_yaxes(title_text=f'{var1} {(units[var1])}', secondary_y=False)
   fig.update_yaxes(title_text=f'{var2} ({units[var2]})', secondary_y=True)
@@ -277,7 +277,7 @@ def plotly_graph(data1, data2, var1, var2, color1='blue', color2='red', title=No
 def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units):
   chamber_actual = chamber_actual_check(chamber, actual)
   title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_actual[0]} Chamber'
-  plotly_graph(df, df, var1, var1, x_range=x_range, units=units, title=title)
+  plotly_graph(df, df, var1, var2, x_range=x_range, units=units, title=title)
 
 
 
