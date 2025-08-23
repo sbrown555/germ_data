@@ -257,7 +257,7 @@ def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, un
   fig.update_xaxes(title_text="Time", range=x_range)
   fig.update_yaxes(title_text=f'{var1} {(units[var2])}', secondary_y=False)
   fig.update_yaxes(title_text=f'{var2} ({units[var2]})', secondary_y=True)
-  fig.update_layout(title='f{var1} and {var2}'
+  fig.update_layout(title='f{var1} and {var2}')
   st.plotly_chart(fig, use_container_width=True)
   
 for chamber in data['Chamber'].unique():
