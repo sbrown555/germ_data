@@ -236,7 +236,7 @@ co2_range = st.slider('Select CO2 range: ', min_value=0, max_value=1500, value=(
 rh_range = st.slider('Select RH range: ', min_value=0, max_value = 100, value=(1,100), key='rh_slider')
 par_range = st.slider('Select PAR range: ', min_value = 0, max_value = 1500, value=(0,1500), key = 'par_slider')
 temp_range = st.slider('Select Temperature range: ', min_value = 0, max_value = 50, value=(15,30), key='temp_slider')
-lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range)
+lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range}
 
 # Filter data
 data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
