@@ -233,9 +233,10 @@ date_low_limit = date_range[0]
 date_upper_limit = date_range[1]
 
 co2_range = st.slider('Select CO2 range: ', min_value=0, max_value=1500, value=(350, 800), key='co2_slider')
-
 rh_range = st.slider('Select RH range: ', min_value=0, max_value = 100, value=(1,100), key='rh_slider')
-
+par_range = st.slider('Select PAR range: ', min_value = 0, max_value = 1500, value=(0,1500), key = 'par_slider')
+temp_range = st.slider('Select Temperature range: ', min_value = 0, max_value = 50, value=(15,30), key='temp_slider')
+lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range)
 
 # Filter data
 data = data[(data['minute'] >= date_range[0]) & (data['minute'] <= date_range[1])]
@@ -321,7 +322,6 @@ plt.close(fig)
   # plt.savefig(fig_name)
 
 # Graphing all variables with PAR. Not zoomed in
-
 variables = ['CO2','RH','Temp']
 for var in variables:
   fig, axes = plt.subplots(2,1)
@@ -335,21 +335,23 @@ for var in variables:
   ax1.plot(data_a['minute'], data_a[var], 'b-', label=var)
   ax1.set_ylabel(var, color = 'b')
   ax1.tick_params(axis='y', labelcolor='b')
+  ax1.set_ylim(lim_dict[var][0], lim_dict[var][1])
   ax2=ax1.twinx()
   ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
   ax2.set_ylabel('PAR', color = 'r')
   ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
-  ax2.set_ylim(0,1500)
+  ax2.set_ylim(lim_dict[PAR][0], lim_dict[PAR][1])
   ax3 = axes[1]
   ax3.plot(data_b['minute'], data_b[var], 'b-', label = var)
   ax3.set_ylabel(var, color = 'b')
   ax3.set_xlabel('date')
   ax3.tick_params(axis='y', labelcolor = 'b')
+  ax3.set_ylim(lim_dict[var][0], lim_dict[var][1])
   ax4 = ax3.twinx()
   ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
   ax4.set_ylabel('PAR', color = 'r')
   ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
-  ax4.set_ylim(0,1500)
+  ax4.set_ylim(lim_dict[PAR][0], lim_dict[PAR][1])
   date_format = mdates.DateFormatter('%m/%d')
   for ax in axes:
     ax.xaxis.set_major_formatter(date_format)
