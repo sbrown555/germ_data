@@ -340,7 +340,7 @@ for var in variables:
   ax2.plot(data_a['minute'], data_a['PAR'], 'r-', label='PAR')
   ax2.set_ylabel('PAR', color = 'r')
   ax2.tick_params(axis='y', labelcolor='r', rotation = 45)
-  ax2.set_ylim(lim_dict[PAR][0], lim_dict[PAR][1])
+  ax2.set_ylim(lim_dict['PAR'][0], lim_dict['PAR'][1])
   ax3 = axes[1]
   ax3.plot(data_b['minute'], data_b[var], 'b-', label = var)
   ax3.set_ylabel(var, color = 'b')
@@ -351,7 +351,7 @@ for var in variables:
   ax4.plot(data_b['minute'], data_b['PAR'], 'r-', label = 'PAR')
   ax4.set_ylabel('PAR', color = 'r')
   ax4.tick_params(axis='y', labelcolor = 'r', rotation = 45)
-  ax4.set_ylim(lim_dict[PAR][0], lim_dict[PAR][1])
+  ax4.set_ylim(lim_dict['PAR'][0], lim_dict['PAR'][1])
   date_format = mdates.DateFormatter('%m/%d')
   for ax in axes:
     ax.xaxis.set_major_formatter(date_format)
