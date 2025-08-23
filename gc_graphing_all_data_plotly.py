@@ -281,7 +281,7 @@ def graph_actual_sp(df, var, chamber, color1='blue', color2='orange', x_range=No
 variables = ['CO2', 'RH', 'Temp', 'PAR']
 for var in variables:
   for chamber in ['A', 'B']:
-    graph_actual_sp(data, chamber)
+    graph_actual_sp(data, var, chamber)
 
 
 
