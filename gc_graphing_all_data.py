@@ -239,18 +239,26 @@ lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range
 #   fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
 # pio.renderers.default = "browser"
 
-def graph_plotly_var_par(df, chamber, actual, var):
-  fig = make_subplots(specs=[[{"secondary_y": True}]])
-  df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
-  fig.add_trace(go.Scatter(x=df['minute'], y = df[var], name = var, mode='lines'), secondary_y=False)
-  fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
-  # pio.renderers.default = "browser"
-  st.plotly_chart(fig)
+# def graph_plotly_var_par(df, chamber, actual, var):
+#   fig = make_subplots(specs=[[{"secondary_y": True}]])
+#   df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
+#   fig.add_trace(go.Scatter(x=df['minute'], y = df[var], name = var, mode='lines'), secondary_y=False)
+#   fig.add_trace(go.Scatter(x=df['minute'], y = df['PAR'], name = 'umol', mode='lines'), secondary_y=True)
+#   # pio.renderers.default = "browser"
+#   st.plotly_chart(fig)
 
+def graph_plotly_var_par(df, chamber, actual, var):
+    df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(go.Scatter(x=df['minute'], y=df[var], name=var, mode='lines'),secondary_y=False)
+    fig.add_trace(go.Scatter(x=df['minute'], y=df['PAR'], name='PAR (umol)', mode='lines'),secondary_y=True)
+    fig.update_xaxes(title_text="Time")
+    fig.update_yaxes(title_text=var, secondary_y=False)
+    fig.update_yaxes(title_text="PAR (umol)", secondary_y=True)
+    st.plotly_chart(fig, use_container_width=True)
+  
 for chamber in data['Chamber'].unique():
   graph_plotly_var_par(data, chamber, True, 'CO2')
-
-
 
 
 # Filter data
