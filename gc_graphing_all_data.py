@@ -223,6 +223,7 @@ variables = ['CO2', 'Temp', 'RH', 'PAR']
 for var in variables:
   data[var] = pd.to_numeric(data[var])
 data.dropna(how='any', inplace=True)
+data = data.sort_values('minute')
 min_date = data['minute'].min().to_pydatetime()
 max_date = data['minute'].max().to_pydatetime()
 
