@@ -302,8 +302,8 @@ def graph_chamber(df, var, actual_sp, colors = ['purple', 'green'], x_range=None
   plotly_graph(df_a, df_b, var, var, colors=colors, x_range=x_range, title=title)
 
 for var in variables:
-  for x in ['actual', 'sp']:
-    graph_chamber(data, var, x)
+  for actual_sp in [True, False]:
+    graph_chamber(data, var, actual_sp)
  
 
                
