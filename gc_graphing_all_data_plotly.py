@@ -259,9 +259,9 @@ def plotly_graph(data1, data2, var1, var2, color1='blue', color2='red', title=No
   st.plotly_chart(fig, use_container_width=True)
 
 def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units):
-  chamber_actual = chamber_actual_check(chamber, actual)
+  chamber_name = chamber_actual_check(chamber, actual)[0]
   df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
-  title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_actual[0]} Chamber'
+  title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_name} Chamber'
   plotly_graph(df, df, var1, var2, x_range=x_range, units=units, title=title)
 
 # Graphing variables with PAR
@@ -272,10 +272,11 @@ for var in variables:
 
 # SP vs actual (comparing setpoint and actual variables for each chamber)
 def graph_actual_sp(df, var, chamber, color1='blue', color2='orange', x_range=None):
+  chamber_name = chamber_actual_check(chamber, True)[0]
   df = df[df['Chamber'] == chamber]
   data1=df[df['actual_sp'] == 'actual']
   data2 = df[df['actual_sp'] == 'sp']
-  title = f'Actual and Set Point of {var} in {chamber_actual[0]} Chamber'
+  title = f'Actual and Set Point of {var} in {chamber_name} Chamber'
   plotly_graph(data1, data2, var, var, color1=color1, color2=color2, title=title, x_range=x_range)
 
 variables = ['CO2', 'RH', 'Temp', 'PAR']
