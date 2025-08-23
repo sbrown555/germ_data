@@ -259,9 +259,9 @@ def plotly_graph(data1, data2, var1, var2, color1='blue', color2='red', title=No
   st.plotly_chart(fig, use_container_width=True)
 
 def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units):
-  chamber_name = chamber_actual_check(chamber, actual)[0]
+  chamber_actual= chamber_actual_check(chamber, actual)
   df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
-  title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_name} Chamber'
+  title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_actual[0]} Chamber'
   plotly_graph(df, df, var1, var2, x_range=x_range, units=units, title=title)
 
 # Graphing variables with PAR
