@@ -1,6 +1,3 @@
-# Need to add actual xlim to graphs to keep axes from changing when data is missing
-# Need to add ylim through a dictionary giving high and low limits for each variable. Default should be None
-
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 import json
@@ -221,17 +218,6 @@ data = data.sort_values('minute')
 min_date = data['minute'].min().to_pydatetime()
 max_date = data['minute'].max().to_pydatetime()
 
-# # Sliders and Toggles
-# date_range = st.slider("Select date range", min_value=min_date, max_value=max_date, value=(min_date, max_date))
-# date_low_limit = date_range[0]
-# date_upper_limit = date_range[1]
-
-# co2_range = st.slider('Select CO2 range: ', min_value=0, max_value=1500, value=(350, 800), key='co2_slider')
-# rh_range = st.slider('Select RH range: ', min_value=0, max_value = 100, value=(1,100), key='rh_slider')
-# par_range = st.slider('Select PAR range: ', min_value = 0, max_value = 1500, value=(0,1500), key = 'par_slider')
-# temp_range = st.slider('Select Temperature range: ', min_value = 0, max_value = 500, value=(150,300), key='temp_slider')
-# lim_dict = {'CO2':co2_range, 'RH':rh_range, 'PAR': par_range, 'Temp': temp_range}
-
 def chamber_actual_check(chamber=None, actual=None):
   co2_treatment = None
   actual_sp = None
@@ -265,6 +251,25 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.update_yaxes(title_text=axis_labels[1], secondary_y=True)
   fig.update_layout(title=title)
   st.plotly_chart(fig, use_container_width=True, key=key)
+
+# Fully interavtive graph:
+# data1_settings = st.multiselect(label='Relevant data for first line of graph: ', options = data1_options, default = ['A', 'actual'], key='data1_multiselect')
+# data2_settings = st.multiselect(label='Relevant data for second line of graph: ', options = data2_options, default = ['B','actual'], key='data2_multiselect')
+
+data1_chamber = st.radio(label='Select which chamber to graph as the first line: ', options = ['A', 'B'], index = 0, key='data1_chamber_radio')
+data1_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the first line: ', options = ['actual', 'sp'], index = 0, key='data1_actual_sp_radio')
+data1_var = st.radio(label = 'Select which variable to graph as the first line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data1_var_radio')
+data2_chamber = st.radio(label='Select which chamber to graph as the second line: ', options = ['A', 'B'], index=1, key='data2_chamber_radio')
+data2_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the second line: ', options = ['actual', 'sp'], index = 0, key='data2_actual_sp_radio')
+data2_var = st.radio(label = 'Select which variable to graph as the second line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data2_var_radio')
+
+df1 = data[data['Chamber] == data1_chamber]
+df1 = df1[df1['actual_sp'] == data1_actual_sp]
+df2 = data[data['Chamber] == data2_chamber]
+df2 = df2[df2['actual_sp'] == data2_actual_sp
+legend_labels = [f'{data1_actual_sp} {data1_var} in {data1_chamber}', f'{data2_actual_sp} {data2_var} in {data2_chamber}']
+plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, key='interactive_graph')
+
 
 def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units, key=None):
   chamber_actual= chamber_actual_check(chamber, actual)
