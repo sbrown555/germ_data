@@ -252,8 +252,8 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=legend_labels[0], mode='lines', line=dict(color = colors[0])),secondary_y=False)
   fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=legend_labels[1], mode='lines', line=dict(color = colors[1])),secondary_y=True)
   fig.update_xaxes(title_text="Time", range=x_range)
-  fig.update_yaxes(title_text=axis_labels[0], range = y_range[0], secondary_y=False)
-  fig.update_yaxes(title_text=axis_labels[1], range = y_range[1], secondary_y=True)
+  fig.update_yaxes(title_text=axis_labels[0], range = y_range1, secondary_y=False)
+  fig.update_yaxes(title_text=axis_labels[1], range = y_range2, secondary_y=True)
   fig.update_layout(title=title)
   st.plotly_chart(fig, use_container_width=True, key=key)
 
