@@ -301,7 +301,7 @@ def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None
   df_b = df[df['Chamber'] == 'B']
   actual_title = ('Actual' if actual else 'Set Point')
   title = f'{var} in Both Chambers, {actual_title}'
-  plotly_graph(df_a, df_b, var, var, colors=colors, legend_label = ['A', 'B'], x_range=x_range, title=title, key=key)
+  plotly_graph(df_a, df_b, var, var, colors=colors, legend_labels = ['A', 'B'], x_range=x_range, title=title, key=key)
 
 variables = ['CO2', 'RH', 'Temp', 'PAR']
 for var in variables:
