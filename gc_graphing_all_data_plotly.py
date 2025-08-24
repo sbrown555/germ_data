@@ -266,7 +266,7 @@ data2_var = st.radio(label = 'Select which variable to graph as the second line:
 df1 = data[data['Chamber'] == data1_chamber]
 df1 = df1[df1['actual_sp'] == data1_actual_sp]
 df2 = data[data['Chamber'] == data2_chamber]
-df2 = df2[df2['actual_sp'] == data2_actual_sp
+df2 = df2[df2['actual_sp'] == data2_actual_sp]
 legend_labels = [f'{data1_actual_sp} {data1_var} in {data1_chamber}', f'{data2_actual_sp} {data2_var} in {data2_chamber}']
 plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, key='interactive_graph')
 
