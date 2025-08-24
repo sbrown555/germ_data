@@ -238,7 +238,7 @@ def chamber_actual_check(chamber=None, actual=None):
   return [co2_treatment, actual_sp]
 
 units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
-def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, units=units, key=None):
+def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range=None, units=units, key=None):
   if axis_labels is None:
     axis_labels = [f'{var1} {(units[var1])}', f'{var2} ({units[var2]})']
   if legend_labels is None:
@@ -247,8 +247,10 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=legend_labels[0], mode='lines', line=dict(color = colors[0])),secondary_y=False)
   fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=legend_labels[1], mode='lines', line=dict(color = colors[1])),secondary_y=True)
   fig.update_xaxes(title_text="Time", range=x_range)
-  fig.update_yaxes(title_text=axis_labels[0], secondary_y=False)
-  fig.update_yaxes(title_text=axis_labels[1], secondary_y=True)
+  if var1 == var2:
+    y_range[1] = y_range[0]
+  fig.update_yaxes(title_text=axis_labels[0], range = y_range[0], secondary_y=False)
+  fig.update_yaxes(title_text=axis_labels[1], range = y_range[1], secondary_y=True)
   fig.update_layout(title=title)
   st.plotly_chart(fig, use_container_width=True, key=key)
 
