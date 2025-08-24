@@ -256,6 +256,8 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
 # data1_settings = st.multiselect(label='Relevant data for first line of graph: ', options = data1_options, default = ['A', 'actual'], key='data1_multiselect')
 # data2_settings = st.multiselect(label='Relevant data for second line of graph: ', options = data2_options, default = ['B','actual'], key='data2_multiselect')
 
+chart_placeholder = st.empty()
+
 data1_chamber = st.radio(label='Select which chamber to graph as the first line: ', options = ['A', 'B'], index = 0, key='data1_chamber_radio')
 data1_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the first line: ', options = ['actual', 'sp'], index = 0, key='data1_actual_sp_radio')
 data1_var = st.radio(label = 'Select which variable to graph as the first line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data1_var_radio')
@@ -269,6 +271,8 @@ df2 = data[data['Chamber'] == data2_chamber]
 df2 = df2[df2['actual_sp'] == data2_actual_sp]
 legend_labels = [f'{data1_actual_sp} {data1_var} in {data1_chamber}', f'{data2_actual_sp} {data2_var} in {data2_chamber}']
 plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, key='interactive_graph')
+chart_placeholder.plotly_chart(fig, use_container_width=True)
+
 
 
 def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units, key=None):
