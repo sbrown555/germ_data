@@ -238,7 +238,7 @@ def chamber_actual_check(chamber=None, actual=None):
   return [co2_treatment, actual_sp]
 
 units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
-def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range1=[None, None], y_range2=[None, None], units=units, key=None):
+def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range1=None, y_range2=None, units=units, key=None):
   if axis_labels is None:
     axis_labels = [f'{var1} {(units[var1])}', f'{var2} ({units[var2]})']
   if legend_labels is None:
