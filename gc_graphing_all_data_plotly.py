@@ -250,6 +250,7 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.update_yaxes(title_text=axis_labels[0], secondary_y=False)
   fig.update_yaxes(title_text=axis_labels[1], secondary_y=True)
   fig.update_layout(title=title)
+  return fig
   st.plotly_chart(fig, use_container_width=True, key=key)
 
 # Fully interavtive graph:
@@ -270,7 +271,7 @@ df1 = df1[df1['actual_sp'] == data1_actual_sp]
 df2 = data[data['Chamber'] == data2_chamber]
 df2 = df2[df2['actual_sp'] == data2_actual_sp]
 legend_labels = [f'{data1_actual_sp} {data1_var} in {data1_chamber}', f'{data2_actual_sp} {data2_var} in {data2_chamber}']
-plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, key='interactive_graph')
+fig = plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, key='interactive_graph')
 chart_placeholder.plotly_chart(fig, use_container_width=True)
 
 
