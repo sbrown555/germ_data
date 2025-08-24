@@ -250,8 +250,8 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.update_yaxes(title_text=axis_labels[0], secondary_y=False)
   fig.update_yaxes(title_text=axis_labels[1], secondary_y=True)
   fig.update_layout(title=title)
-  return fig
   st.plotly_chart(fig, use_container_width=True, key=key)
+  return fig
 
 # Fully interavtive graph:
 # data1_settings = st.multiselect(label='Relevant data for first line of graph: ', options = data1_options, default = ['A', 'actual'], key='data1_multiselect')
