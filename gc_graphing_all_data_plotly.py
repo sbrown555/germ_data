@@ -238,11 +238,16 @@ def chamber_actual_check(chamber=None, actual=None):
   return [co2_treatment, actual_sp]
 
 units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
-def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range=[None, None], units=units, key=None):
+def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range1=[None, None], y_range2=[None, None], units=units, key=None):
   if axis_labels is None:
     axis_labels = [f'{var1} {(units[var1])}', f'{var2} ({units[var2]})']
   if legend_labels is None:
     legend_labels = [var1, var2]
+  if var1 == var2 and y_range1 is None and y_range2 is None:
+    y_min = min(data1[var].min(), data2[var].min())
+    y_max = max(data1[var].max(), data2[var].max())
+    y_range1 = [y_min, y_max]
+    y_range2 = [y_min, y_max]
   fig = make_subplots(specs=[[{"secondary_y": True}]])
   fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=legend_labels[0], mode='lines', line=dict(color = colors[0])),secondary_y=False)
   fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=legend_labels[1], mode='lines', line=dict(color = colors[1])),secondary_y=True)
