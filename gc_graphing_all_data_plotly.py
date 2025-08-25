@@ -43,7 +43,8 @@ def data_from_date(date_folder, actual, time_offset = None, cols = None):
   date_folder_id = date_folder['id']
   for chamber_folder in drive.ListFile({'q':f"'{date_folder_id}' in parents and trashed=false"}).GetList():
     if 'other' not in chamber_folder['title']:
-      print(f"chamber folder {string_id}: {chamber_folder['title']}")
+      # print(f"chamber folder {string_id}: {chamber_folder['title']}")
+      st.write(f"chamber folder {string_id}: {chamber_folder['title']}")
       chamber_folder_id = chamber_folder['id']
       chamber = chamber_folder['title'].split('/')[-1].split('_')[0][-1]
       for process_folder in drive.ListFile({'q':f"'{chamber_folder_id}' in parents and trashed=false"}).GetList():
@@ -171,6 +172,7 @@ current_date = max(date_list).strftime(format = '%d%b%y')
 # Adding as-yet unprocessed data to the primary dataset
 data = data_old
 for date in sorted(file_dict.keys()):
+  st.write(date)
   if date in offset_dict.keys():
     time_offset = offset_dict[date]
   else:
