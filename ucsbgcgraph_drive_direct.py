@@ -71,12 +71,12 @@ def data_from_date(date_folder, actual, time_offset = None, cols = None):
                   df.reset_index(inplace=True)
                   list_df.append(df)
                 except Exception as e:
-                  print(f"Failed to read {csv_file['title']}: {e}")
+                  st.write(f"Failed to read {csv_file['title']}: {e}")
               else:
-                print(f"already processed {csv_file['title']}")
+                st.write(f"already processed {csv_file['title']}")
   df = pd.concat(list_df, axis=0)
   df.reset_index(inplace=True)
-  df['minute'] = df['datetime'].dt.strftime('%m/%d/%Y %H')
+  df['minute'] = df['datetime'].date.strftime('%m/%d/%Y %H')
   data = df.groupby(['minute', 'Chamber', 'Process']).agg({'Value':'mean'})
   data.reset_index(inplace=True)
   data = data.pivot(index=['minute', 'Chamber'], columns = 'Process', values = 'Value')
@@ -163,11 +163,13 @@ for file in file_list:
     date = pd.to_datetime(file['title'].split('_')[0])
     date_list.append(date)
     if date > last_processing_date:
+      date_list.append(date)
       file_dict[date] = file
   except Exception as e:
     file_name = file['title']
-    print(f"failed to review {file_name}: {e}")
+    st.write(f"failed to review {file_name}: {e}")
 current_date = max(date_list).strftime(format = '%d%b%y')
+# Current date is used only to name the file. It is important to note that it refers to the latest download date according to the file titles, and not the latest datapoints in those files. A: it seems like too much processing to go look for the latest date in each of those files and B: given the issues we've had with data (time and date settings wandering and missing data) the latest datapoints might not align with the download date, which is actually more informative in terms of troubleshooting. So just be aware this date refers to the last time stamp from Jazmin's downloads of the GC data. 
 
 # Adding as-yet unprocessed data to the primary dataset
 data = data_old
@@ -198,6 +200,13 @@ file_name = f"gc_data_processed_{current_date}.csv"
 duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
 if not duplicate_check:
   st.write('There is an updated file!')
+  csv_buffer = StringIO()
+  data.to_csv(csv_buffer, index=False)
+  csv_buffer.seek(0)
+  gfile = drive.CreateFile({"title": f'{file_name}_test', "parents": [{"id": processed_folder_id}]})
+  gfile.SetContentString(csv_buffer.getvalue())
+  gfile.Upload(param={'supportsAllDrives': True})
+  st.write("CSV uploaded to drive successfully!")
 else:
   st.write('No new data')
 csv_buffer = StringIO()
@@ -210,125 +219,125 @@ st.download_button(
     mime='text/csv'
 )
 
-# This last piece of uploading new dataset to google drive doesn't work with personal google accounts, only shared drives. I can't create a shared drive with my account. I asked for WFFRC permission to share the relevant folders on the WFFRC drive. If they approve I'll need to change the folder IDs to reflect folders on WFFRC shared drive rather than Jazmin's personal drive where they are now.
-duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
-if not duplicate_check:
-  csv_buffer = StringIO()
-  data.to_csv(csv_buffer, index=False)
-  csv_buffer.seek(0)
-  gfile = drive.CreateFile({"title": f'{file_name}_test', "parents": [{"id": processed_folder_id}]})
-  gfile.SetContentString(csv_buffer.getvalue())
-  gfile.Upload(param={'supportsAllDrives': True})
-  print("CSV uploaded successfully!")
+# # This last piece of uploading new dataset to google drive doesn't work with personal google accounts, only shared drives. I can't create a shared drive with my account. I asked for WFFRC permission to share the relevant folders on the WFFRC drive. If they approve I'll need to change the folder IDs to reflect folders on WFFRC shared drive rather than Jazmin's personal drive where they are now.
+# duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
+# if not duplicate_check:
+#   csv_buffer = StringIO()
+#   data.to_csv(csv_buffer, index=False)
+#   csv_buffer.seek(0)
+#   gfile = drive.CreateFile({"title": f'{file_name}_test', "parents": [{"id": processed_folder_id}]})
+#   gfile.SetContentString(csv_buffer.getvalue())
+#   gfile.Upload(param={'supportsAllDrives': True})
+#   print("CSV uploaded successfully!")
 
-# Changing definitions of data so compatible with graphing code I copied and pasted here
-data['minute'] = pd.to_datetime(data['minute'])
-variables = ['CO2', 'Temp', 'RH', 'PAR']
-for var in variables:
-  data[var] = pd.to_numeric(data[var])
-data.dropna(how='any', inplace=True)
-data = data.sort_values('minute')
-min_date = data['minute'].min().to_pydatetime()
-max_date = data['minute'].max().to_pydatetime()
+# # Changing definitions of data so compatible with graphing code I copied and pasted here
+# data['minute'] = pd.to_datetime(data['minute'])
+# variables = ['CO2', 'Temp', 'RH', 'PAR']
+# for var in variables:
+#   data[var] = pd.to_numeric(data[var])
+# data.dropna(how='any', inplace=True)
+# data = data.sort_values('minute')
+# min_date = data['minute'].min().to_pydatetime()
+# max_date = data['minute'].max().to_pydatetime()
 
-def chamber_actual_check(chamber=None, actual=None):
-  co2_treatment = None
-  actual_sp = None
-  if chamber is not None:
-    if chamber == 'A':
-      co2_treatment = 'HiC'
-    elif chamber == 'B':
-      co2_treatment = 'LowC'
-    else:
-      st.error('Please select a chamber: A or B')
-  if actual is not None:
-    if actual == True:
-      actual_sp = 'Actual'
-    elif actual == False:
-      actual_sp = 'Set Point'
-    else:
-      st.error('Please specify if you want to graph actual or setpoint values')
-  return [co2_treatment, actual_sp]
+# def chamber_actual_check(chamber=None, actual=None):
+#   co2_treatment = None
+#   actual_sp = None
+#   if chamber is not None:
+#     if chamber == 'A':
+#       co2_treatment = 'HiC'
+#     elif chamber == 'B':
+#       co2_treatment = 'LowC'
+#     else:
+#       st.error('Please select a chamber: A or B')
+#   if actual is not None:
+#     if actual == True:
+#       actual_sp = 'Actual'
+#     elif actual == False:
+#       actual_sp = 'Set Point'
+#     else:
+#       st.error('Please specify if you want to graph actual or setpoint values')
+#   return [co2_treatment, actual_sp]
 
-units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
-def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range1=None, y_range2=None, units=units, key=None):
-  if axis_labels is None:
-    axis_labels = [f'{var1} {(units[var1])}', f'{var2} ({units[var2]})']
-  if legend_labels is None:
-    legend_labels = [var1, var2]
-  if var1 == var2 and y_range1 is None and y_range2 is None:
-    y_min = min(data1[var].min(), data2[var].min())
-    y_max = max(data1[var].max(), data2[var].max())
-    y_range1 = [y_min, y_max]
-    y_range2 = [y_min, y_max]
-  fig = make_subplots(specs=[[{"secondary_y": True}]])
-  fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=legend_labels[0], mode='lines', line=dict(color = colors[0])),secondary_y=False)
-  fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=legend_labels[1], mode='lines', line=dict(color = colors[1])),secondary_y=True)
-  fig.update_xaxes(title_text="Time", range=x_range)
-  fig.update_yaxes(title_text=axis_labels[0], range = y_range1, secondary_y=False)
-  fig.update_yaxes(title_text=axis_labels[1], range = y_range2, secondary_y=True)
-  fig.update_layout(title=title)
-  st.plotly_chart(fig, use_container_width=True, key=key)
+# units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
+# def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range1=None, y_range2=None, units=units, key=None):
+#   if axis_labels is None:
+#     axis_labels = [f'{var1} {(units[var1])}', f'{var2} ({units[var2]})']
+#   if legend_labels is None:
+#     legend_labels = [var1, var2]
+#   if var1 == var2 and y_range1 is None and y_range2 is None:
+#     y_min = min(data1[var].min(), data2[var].min())
+#     y_max = max(data1[var].max(), data2[var].max())
+#     y_range1 = [y_min, y_max]
+#     y_range2 = [y_min, y_max]
+#   fig = make_subplots(specs=[[{"secondary_y": True}]])
+#   fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=legend_labels[0], mode='lines', line=dict(color = colors[0])),secondary_y=False)
+#   fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=legend_labels[1], mode='lines', line=dict(color = colors[1])),secondary_y=True)
+#   fig.update_xaxes(title_text="Time", range=x_range)
+#   fig.update_yaxes(title_text=axis_labels[0], range = y_range1, secondary_y=False)
+#   fig.update_yaxes(title_text=axis_labels[1], range = y_range2, secondary_y=True)
+#   fig.update_layout(title=title)
+#   st.plotly_chart(fig, use_container_width=True, key=key)
 
-# Fully interavtive graph:
-# data1_settings = st.multiselect(label='Relevant data for first line of graph: ', options = data1_options, default = ['A', 'actual'], key='data1_multiselect')
-# data2_settings = st.multiselect(label='Relevant data for second line of graph: ', options = data2_options, default = ['B','actual'], key='data2_multiselect')
+# # Fully interavtive graph:
+# # data1_settings = st.multiselect(label='Relevant data for first line of graph: ', options = data1_options, default = ['A', 'actual'], key='data1_multiselect')
+# # data2_settings = st.multiselect(label='Relevant data for second line of graph: ', options = data2_options, default = ['B','actual'], key='data2_multiselect')
 
-data1_chamber = st.radio(label='Select which chamber to graph as the first line: ', options = ['A', 'B'], index = 0, key='data1_chamber_radio')
-data1_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the first line: ', options = ['actual', 'sp'], index = 0, key='data1_actual_sp_radio')
-data1_var = st.radio(label = 'Select which variable to graph as the first line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data1_var_radio')
-data2_chamber = st.radio(label='Select which chamber to graph as the second line: ', options = ['A', 'B'], index=1, key='data2_chamber_radio')
-data2_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the second line: ', options = ['actual', 'sp'], index = 0, key='data2_actual_sp_radio')
-data2_var = st.radio(label = 'Select which variable to graph as the second line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data2_var_radio')
+# data1_chamber = st.radio(label='Select which chamber to graph as the first line: ', options = ['A', 'B'], index = 0, key='data1_chamber_radio')
+# data1_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the first line: ', options = ['actual', 'sp'], index = 0, key='data1_actual_sp_radio')
+# data1_var = st.radio(label = 'Select which variable to graph as the first line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data1_var_radio')
+# data2_chamber = st.radio(label='Select which chamber to graph as the second line: ', options = ['A', 'B'], index=1, key='data2_chamber_radio')
+# data2_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the second line: ', options = ['actual', 'sp'], index = 0, key='data2_actual_sp_radio')
+# data2_var = st.radio(label = 'Select which variable to graph as the second line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data2_var_radio')
 
-df1 = data[data['Chamber'] == data1_chamber]
-df1 = df1[df1['actual_sp'] == data1_actual_sp]
-df2 = data[data['Chamber'] == data2_chamber]
-df2 = df2[df2['actual_sp'] == data2_actual_sp]
-legend_labels = [f'{data1_actual_sp} {data1_var} in {data1_chamber}', f'{data2_actual_sp} {data2_var} in {data2_chamber}']
-title = 'Interactive Graph'
-plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, title = title, key='interactive_graph')
+# df1 = data[data['Chamber'] == data1_chamber]
+# df1 = df1[df1['actual_sp'] == data1_actual_sp]
+# df2 = data[data['Chamber'] == data2_chamber]
+# df2 = df2[df2['actual_sp'] == data2_actual_sp]
+# legend_labels = [f'{data1_actual_sp} {data1_var} in {data1_chamber}', f'{data2_actual_sp} {data2_var} in {data2_chamber}']
+# title = 'Interactive Graph'
+# plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, title = title, key='interactive_graph')
 
 
-def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units, key=None):
-  chamber_actual= chamber_actual_check(chamber, actual)
-  df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
-  title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_actual[0]} Chamber'
-  plotly_graph(df, df, var1, var2, x_range=x_range, units=units, title=title, key=key)
+# def graph_plotly_var_par(df, chamber, actual, var1, var2='PAR', x_range=None, units = units, key=None):
+#   chamber_actual= chamber_actual_check(chamber, actual)
+#   df = df[(df['Chamber'] == chamber) & (df['actual_sp'] == ('actual' if actual else 'sp'))]
+#   title = f'{chamber_actual[1]} {var1} and {var2} in {chamber_actual[0]} Chamber'
+#   plotly_graph(df, df, var1, var2, x_range=x_range, units=units, title=title, key=key)
 
-# Graphing variables with PAR
-variables = ['CO2', 'RH', 'Temp']
-for var in variables:
-  for chamber in ['A','B']:
-    graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date], key=f'{var}_with_PAR_chamber={chamber}')
+# # Graphing variables with PAR
+# variables = ['CO2', 'RH', 'Temp']
+# for var in variables:
+#   for chamber in ['A','B']:
+#     graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date], key=f'{var}_with_PAR_chamber={chamber}')
 
-# SP vs actual (comparing setpoint and actual variables for each chamber)
-def graph_actual_sp(df, var, chamber, colors = ['blue', 'orange'], x_range=None, key=None):
-  chamber_name = chamber_actual_check(chamber, True)[0]
-  df = df[df['Chamber'] == chamber]
-  data1=df[df['actual_sp'] == 'actual']
-  data2 = df[df['actual_sp'] == 'sp']
-  title = f'Actual and Set Point of {var} in {chamber_name} Chamber'
-  plotly_graph(data1, data2, var, var, colors = colors, legend_labels = ['actual', 'setpoint'], title=title, x_range=x_range, key=key)
+# # SP vs actual (comparing setpoint and actual variables for each chamber)
+# def graph_actual_sp(df, var, chamber, colors = ['blue', 'orange'], x_range=None, key=None):
+#   chamber_name = chamber_actual_check(chamber, True)[0]
+#   df = df[df['Chamber'] == chamber]
+#   data1=df[df['actual_sp'] == 'actual']
+#   data2 = df[df['actual_sp'] == 'sp']
+#   title = f'Actual and Set Point of {var} in {chamber_name} Chamber'
+#   plotly_graph(data1, data2, var, var, colors = colors, legend_labels = ['actual', 'setpoint'], title=title, x_range=x_range, key=key)
 
-variables = ['CO2', 'RH', 'Temp', 'PAR']
-for var in variables:
-  for chamber in ['A', 'B']:
-    graph_actual_sp(data, var, chamber, key=f'{var}_actual_sp_comparison_chamber={chamber}')
+# variables = ['CO2', 'RH', 'Temp', 'PAR']
+# for var in variables:
+#   for chamber in ['A', 'B']:
+#     graph_actual_sp(data, var, chamber, key=f'{var}_actual_sp_comparison_chamber={chamber}')
 
-# SP and actual (comparing side by side the setpoint and the actual measurements)
+# # SP and actual (comparing side by side the setpoint and the actual measurements)
 
-def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None, key=None):
-  actual = chamber_actual_check(actual = is_actual)[-1]
-  df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
-  df_a = df[df['Chamber'] == 'A']
-  df_b = df[df['Chamber'] == 'B']
-  actual_title = ('Actual' if actual else 'Set Point')
-  title = f'{var} in Both Chambers, {actual_title}'
-  plotly_graph(df_a, df_b, var, var, colors=colors, legend_labels = ['A', 'B'], x_range=x_range, title=title, key=key)
+# def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None, key=None):
+#   actual = chamber_actual_check(actual = is_actual)[-1]
+#   df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
+#   df_a = df[df['Chamber'] == 'A']
+#   df_b = df[df['Chamber'] == 'B']
+#   actual_title = ('Actual' if actual else 'Set Point')
+#   title = f'{var} in Both Chambers, {actual_title}'
+#   plotly_graph(df_a, df_b, var, var, colors=colors, legend_labels = ['A', 'B'], x_range=x_range, title=title, key=key)
 
-variables = ['CO2', 'RH', 'Temp', 'PAR']
-for var in variables:
-  for is_actual in [True, False]:
-    graph_chamber(data, var, is_actual, key=f'{var}_chamber_comparison_actual={is_actual}')
+# variables = ['CO2', 'RH', 'Temp', 'PAR']
+# for var in variables:
+#   for is_actual in [True, False]:
+#     graph_chamber(data, var, is_actual, key=f'{var}_chamber_comparison_actual={is_actual}')
  
