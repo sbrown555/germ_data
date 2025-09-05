@@ -12,6 +12,7 @@ import streamlit as st
 import plotly.express as px 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import re
 
 
 # Defining functions 
@@ -134,7 +135,7 @@ drive = GoogleDrive(gauth)
 # gauth.ServiceAuth()
 # drive = GoogleDrive(gauth)
 
-# Looking through folder with processed data and finding that most recent date
+# Looking through folder with processed data and finding that most recent 
 processed_folder_id = '11x8zo1ZQYU_MuFh2A36f4TmGYaojEnpZ'
 search_term = 'gc_data_processed'
 if processed_folder_id:
@@ -142,11 +143,18 @@ if processed_folder_id:
 else:
     query = f"title contains '{search_term}' and trashed=false"
 file_list = drive.ListFile({'q': query}).GetList()
-date_dict = {}
+_dict = {}
 for file in file_list:
-  date = file['title'].split('_')[-1].split('.')[0]
-  date = pd.to_datetime(date, format = '%d%b%y')
-  date_dict[date] = file
+  match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}', file['title'])
+  if match:
+    date_str = match.group(0)
+    date = pd.to_datetime(date_str, format='%d%b%y')
+    date_dict[date] = file
+  else:
+    st.write(f"No valid date found in {file['title']}")
+  # date = file['title'].split('_')[-1].split('.')[0]
+  # date = pd.to_datetime(date, format = '%d%b%y')
+  # date_dict[date] = file
 last_processing_date = max(date_dict.keys())
 csv_id = date_dict[last_processing_date]['id']
 columns = ['hour', 'Chamber', 'actual_sp','Temp', 'RH', 'PAR', 'CO2']
