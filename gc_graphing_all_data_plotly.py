@@ -77,16 +77,16 @@ def data_from_date(date_folder, actual, time_offset = None, cols = None):
                 print(f"already processed {csv_file['title']}")
   df = pd.concat(list_df, axis=0)
   df.reset_index(inplace=True)
-  df['hour'] = df['datetime'].dt.strftime('%m/%d/%Y %H')
-  data = df.groupby(['hour', 'Chamber', 'Process']).agg({'Value':'mean'})
+  df['minute'] = df['datetime'].dt.strftime('%m/%d/%Y %H')
+  data = df.groupby(['minute', 'Chamber', 'Process']).agg({'Value':'mean'})
   data.reset_index(inplace=True)
-  data = data.pivot(index=['hour', 'Chamber'], columns = 'Process', values = 'Value')
+  data = data.pivot(index=['minute', 'Chamber'], columns = 'Process', values = 'Value')
   data.reset_index(inplace=True)
   data.drop(columns = 'PAR_umol', inplace=True)
   data.rename(columns={'PAR_max':'PAR'}, inplace=True)
-  data['hour'] = pd.to_datetime(data['hour'])
-  data.loc[data['Chamber'] == 'A', 'hour'] = (data.loc[data['Chamber'] == 'A', 'hour'] + time_offset[0])
-  data.loc[data['Chamber'] == 'B', 'hour'] = (data.loc[data['Chamber'] == 'B', 'hour'] + time_offset[1])
+  data['minute'] = pd.to_datetime(data['minute'])
+  data.loc[data['Chamber'] == 'A', 'minute'] = (data.loc[data['Chamber'] == 'A', 'minute'] + time_offset[0])
+  data.loc[data['Chamber'] == 'B', 'minute'] = (data.loc[data['Chamber'] == 'B', 'minute'] + time_offset[1])
   data.dropna(how='any', inplace=True)
   return data
 
@@ -157,9 +157,9 @@ for file in file_list:
   # date_dict[date] = file
 last_processing_date = max(date_dict.keys())
 csv_id = date_dict[last_processing_date]['id']
-columns = ['hour', 'Chamber', 'actual_sp','Temp', 'RH', 'PAR', 'CO2']
+columns = ['minute', 'Chamber', 'actual_sp','Temp', 'RH', 'PAR', 'CO2']
 data_old = read_drive_id(csv_id, cols = columns)
-last_processing_time = data_old['hour'].max()
+last_processing_time = data_old['minute'].max()
 
 # Looking through "Chamber Data folder and accessing new uploads since last process date
 general_folder_id = "11Cdt-JEEeNaDLNdFj002mWmt5BgnHBrO"
@@ -192,10 +192,10 @@ for date in sorted(file_dict.keys()):
   data_sp_new['actual_sp']='sp'
   data_sp_new = data_sp_new[columns]
   data_new = pd.concat([data_actual_new, data_sp_new])
-  data_new = data_new[data_new['hour'] > last_processing_time]
+  data_new = data_new[data_new['minute'] > last_processing_time]
   data = pd.concat([data_new, data])
   # With data downloaded individually, the above cause some duplicate rows possibly, although it doesn't really make sense to me why
-  # data.drop_duplicates(subset=['hour', 'Chamber', 'actual_sp', 'CO2'])
+  # data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
 
 data_to_download = data.copy()
 
@@ -219,14 +219,14 @@ st.download_button(
 )
 
 # Changing definitions of data so compatible with graphing code I copied and pasted here
-data['hour'] = pd.to_datetime(data['hour'])
+data['minute'] = pd.to_datetime(data['minute'])
 variables = ['CO2', 'Temp', 'RH', 'PAR']
 for var in variables:
   data[var] = pd.to_numeric(data[var])
 data.dropna(how='any', inplace=True)
-data = data.sort_values('hour')
-min_date = data['hour'].min().to_pydatetime()
-max_date = data['hour'].max().to_pydatetime()
+data = data.sort_values('minute')
+min_date = data['minute'].min().to_pydatetime()
+max_date = data['minute'].max().to_pydatetime()
 
 def chamber_actual_check(chamber=None, actual=None):
   co2_treatment = None
@@ -259,8 +259,8 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
     y_range1 = [y_min, y_max]
     y_range2 = [y_min, y_max]
   fig = make_subplots(specs=[[{"secondary_y": True}]])
-  fig.add_trace(go.Scatter(x=data1['hour'], y=data1[var1], name=legend_labels[0], mode='lines', line=dict(color = colors[0])),secondary_y=False)
-  fig.add_trace(go.Scatter(x=data2['hour'], y=data2[var2], name=legend_labels[1], mode='lines', line=dict(color = colors[1])),secondary_y=True)
+  fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=legend_labels[0], mode='lines', line=dict(color = colors[0])),secondary_y=False)
+  fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=legend_labels[1], mode='lines', line=dict(color = colors[1])),secondary_y=True)
   fig.update_xaxes(title_text="Time", range=x_range)
   fig.update_yaxes(title_text=axis_labels[0], range = y_range1, secondary_y=False)
   fig.update_yaxes(title_text=axis_labels[1], range = y_range2, secondary_y=True)
