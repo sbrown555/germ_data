@@ -143,7 +143,7 @@ if processed_folder_id:
 else:
     query = f"title contains '{search_term}' and trashed=false"
 file_list = drive.ListFile({'q': query}).GetList()
-_dict = {}
+date_dict = {}
 for file in file_list:
   match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}', file['title'])
   if match:
