@@ -252,8 +252,10 @@ offset_dict = {'20250509_Chamber_Data': [pd.Timedelta(days=30), pd.Timedelta(day
 # Functions reading all data of a particular usb/ethernet type and concatenating
 # ================================================
 
-def check_processed_data(processed_folder_id, drive, search_term = None, usb = True):
-  if usb = True:
+# Ethernet = True indicates only want it to look through files with ethernet data included. False indicates only want it to include USB downlaods.
+# Returns a list with the first element data_old, the data that has already been processed. The second element is the last processsing time.
+def check_processed_data(processed_folder_id, drive, search_term = None, ethernet = True):
+  if ethernet = False:
     if search_term is None:
       search_term = 'gc_data_processed'
   else:
@@ -273,27 +275,50 @@ def check_processed_data(processed_folder_id, drive, search_term = None, usb = T
   # date = file['title'].split('_')[-1].split('.')[0]
   # date = pd.to_datetime(date, format = '%d%b%y')
   # date_dict[date] = file
-last_processing_date = max(date_dict.keys())
-csv_id = date_dict[last_processing_date]['id']
-columns = ['minute', 'Chamber', 'actual_sp','Temp', 'RH', 'PAR', 'CO2']
-data_old = read_drive_id(csv_id, cols = columns)
-last_processing_time = data_old['minute'].max()
+  last_processing_date = max(date_dict.keys())
+  csv_id = date_dict[last_processing_date]['id']
+  columns = ['minute', 'Chamber', 'actual_sp','Temp', 'RH', 'PAR', 'CO2']
+  data_old = read_drive_id(csv_id, cols = columns)
+  last_processing_time = data_old['minute'].max()
+  return [data_old, last_processing_time]
 
 # Looking through "Chamber Data folder and accessing new uploads since last process date
-general_folder_id = "11Cdt-JEEeNaDLNdFj002mWmt5BgnHBrO"
-file_list = drive.ListFile({'q': f"'{general_folder_id}' in parents and trashed=false"}).GetList()
-date_list = []
-file_dict = {}
-for file in file_list:
-  try: 
-    date = pd.to_datetime(file['title'].split('_')[0])
-    date_list.append(date)
-    if date > last_processing_date:
-      file_dict[date] = file
-  except Exception as e:
-    file_name = file['title']
-    print(f"failed to review {file_name}: {e}")
-current_date = max(date_list).strftime(format = '%d%b%y')
+# General folder id is the id of the folder where the raw unprocessed download files for particular dates are
+# If ethernet is true it includes ethernet downloaded data. False looks only at the USB downloads
+def new_data(general_folder_id, drive, last_processing_date=None, ethernet=True):
+  if ethernet==True:
+    query = f"'{general_folder_id}' in parents and trashed=false"
+  else:
+    query = f"'{general_folder_id}' in parents and not title contains 'thernet' and trashed=false
+  if last_processing_date is None:
+    last_processing_date = pd.Timestamp.min
+  file_list = drive.ListFile({'q': query}).GetList()
+  date_list = []
+  file_dict = {}
+  for file in file_list:
+    try: 
+      match = re.search(
+      date = pd.to_datetime(file['title'].split('_')[0])
+      date_list.append(date)
+      if date > last_processing_date:
+        file_dict[date] = file
+    except Exception as e:
+      file_name = file['title']
+      print(f"failed to review {file_name}: {e}")
+  current_date = max(date_list).strftime(format = '%d%b%y')
+
+
+  match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}',download_folder['title'])
+    if match:
+      date = match.group(0)
+      date = pd.to_datetime(date, format='%d%b%y')
+      print('Date = ', date)
+      data = data_from_ethernet(download_folder)
+      print(data.head())
+      dict_df[date] = data
+    else:
+      print(f"No download date found for {download_folder['title']}")
+      # st.write(f"No download date found for {download_folder['title']}")
 
 # Adding as-yet unprocessed data to the primary dataset
 data = data_old
@@ -317,6 +342,12 @@ for date in sorted(file_dict.keys()):
 
 data_to_download = data.copy()
 
+
+
+# process ethernet data
+# include in ethernet only processed data up to data
+# (the reason I think this might be necessary is to prioritize ethernet derived datapoints - but could also just do this by adding an extra column to the dataframes
+# Then could keep ethernet over usb datapoints when there is a conflict by sorting values in ethernet column and then aggregating with keep=first
 
 # Check to see if there is already an up-to-date processed file, and if not save new processed file
 file_name = f"gc_data_processed_{current_date}.csv"
