@@ -343,11 +343,8 @@ def new_data_ethernet(general_folder_id, drive, ethernet_prior_processing_time):
   data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp'], keep='first', inplace=True)
   return data
 
-def new_data_usb(general_folder_id, drive, last_processing_time=None, ethernet=True):
-  if ethernet==True:
-    query = f"'{general_folder_id}' in parents and trashed=false"
-  else:
-    query = f"'{general_folder_id}' in parents and not title contains 'thernet' and trashed=false
+def new_data_usb(general_folder_id, drive, usb_prior_processing_time=None):
+  query = f"'{general_folder_id}' in parents and not title contains 'thernet' and trashed=false
   if last_processing_date is None:
     last_processing_date = pd.Timestamp.min
   file_list = drive.ListFile({'q': query}).GetList()
