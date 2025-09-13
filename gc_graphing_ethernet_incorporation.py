@@ -13,12 +13,80 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import re
+from io import BytesIO
+import requests
+import streamlit as st
+import datetime
 
-
+# +++++++++++++++++++++++++++++
 # Defining functions 
+# +++++++++++++++++++++++++++++
+# +++++++++++++++++++++++++++++
+
+# Establishing google drive access
+# ===============================
+# ===============================
+def google_drive_access_local():
+  SERVICE_ACCOUNT_JSON = "/Users/sean/Documents/Sean/Lara Research/GC Data/operating-pod-469720-b9-214b1ebc73b3.json"
+  with open(SERVICE_ACCOUNT_JSON) as f:
+    sa_info = json.load(f)
+  client_email = sa_info["client_email"]
+  gauth = GoogleAuth()
+  gauth.settings = {
+    'client_config_backend': 'service',
+    'service_config': {
+        'client_json_file_path': SERVICE_ACCOUNT_JSON,
+        'client_user_email': client_email
+    },
+    'oauth_scope': ['https://www.googleapis.com/auth/drive']
+  }
+  gauth.ServiceAuth()
+  drive = GoogleDrive(gauth)
+  return drive
+  
+def google_drive_access_streamlit():
+  sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
+  client_email = json.loads(sa_json_str)["client_email"]
+  gauth = GoogleAuth()
+  gauth.settings = {
+    'client_config_backend': 'service',
+    'service_config': {
+        'client_json_file_path': None,
+        'client_json': sa_json_str,
+        'client_user_email': client_email
+    },
+    'oauth_scope': ['https://www.googleapis.com/auth/drive']
+  }
+  gauth.ServiceAuth()
+  drive = GoogleDrive(gauth)
+  return drive
+
+# Reading google drive files/folders and data cleaning functions
+# ===============================================================
+
+# This function has as input the id for a csv file in google drive and output is a dataframe with that data. Ignores google-native files. 
+def read_drive_id(csv_id, cols = None):
+  file = drive.CreateFile({'id':csv_id})
+  if not file['mimeType'].startswith('application/vnd.google-apps'):
+    try:
+      csv_content = file.GetContentIOBuffer()
+      csv_bytes = BytesIO(csv_content.read())
+      csv_bytes.seek(0)
+      df = pd.read_csv(csv_bytes, usecols=cols)
+    except UnicodeDecodeError:
+      csv_content = file.GetContentIOBuffer()
+      csv_bytes = BytesIO(csv_content.read())
+      csv_bytes.seek(0)
+      df = pd.read_csv(csv_bytes, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
+  else:
+    df = pd.DataFrame()
+    print(f"Couldn't read file {file['title']}")
+  return df
+
+
 processes = {'PRO_01':'Temp','PRO_02':'RH', 'PRO_03':'PAR_max', 'PRO_04':'PAR_umol','PRO_05':'CO2'}
 
-def data_processing(df):
+def data_cleaning_usb(df):
   df = df[df['Quality'] == 192]
   df = df[['Time Stamp', 'Value']]
   df['datetime'] = df['Time Stamp'].str.split('.').str[0]
@@ -28,8 +96,45 @@ def data_processing(df):
   df_processed = df
   return df_processed
 
+def data_cleaning_ethernet(data, time_offset=None):
+  if time_offset is None:
+      time_offset = [pd.Timedelta(days=0), pd.Timedelta(days=0)]
+  df = data[['DATE', 'TIME', 'Chamber', 'AI_TEMP', 'SP_TEMP', 'AI_HUM', 'SP_HUM', 'AI_LIGHT', 'SP_LIGHT1', 'AI_CO2', 'SP_CO2']].copy()
+  df.rename(columns = {'DATE':'date', 'TIME':'time', 'AI_TEMP':'Temp_actual', 'SP_TEMP':'Temp_sp', 'AI_HUM':'RH_actual', 'SP_HUM':'RH_sp', 'AI_LIGHT':'PAR_actual', 'SP_LIGHT1':'PAR_sp', 'AI_CO2':'CO2_actual', 'SP_CO2':'CO2_sp'}, inplace=True)
+  df['date'] = pd.to_datetime(df['date'], format = '%Y/%m/%d', errors='coerce', utc=False).dt.date
+  df['time'] = pd.to_datetime(df['time'], format = '%H:%M:%S', errors='coerce', utc=False).dt.time
+  datetimes = ['date', 'time']
+  variables = [col for col in df.columns if col not in datetimes and col != 'Chamber']
+  for col in variables:
+    df[col] = pd.to_numeric(df[col], errors='coerce')
+  df.dropna(subset=datetimes+variables, inplace=True)
+  # df['datetime'] = pd.to_datetime(df["date"].astype(str) + " " + df["time"].astype(str), utc=False)
+  df['datetime'] = df.apply(lambda row: datetime.datetime.combine(row['date'], row['time']),axis=1)
+  df.drop(['date','time'], axis=1, inplace=True)
+  index = ['datetime','Chamber']
+  variables = ['Temp_actual', 'Temp_sp', 'RH_actual', 'RH_sp', 'PAR_actual', 'PAR_sp', 'CO2_actual', 'CO2_sp']
+  df = df.melt(id_vars = index, value_vars = variables, var_name = 'variable_name', value_name = 'value')
+  df[['variable', 'actual_sp']] = df['variable_name'].str.split("_", expand=True)
+  df.drop('variable_name', axis=1, inplace=True)
+  index = index+['actual_sp']
+  df = df.pivot(index=index, columns = 'variable', values='value')
+  df.reset_index(inplace=True)
+  df = df[['datetime', 'actual_sp', 'Chamber', 'Temp', 'RH', 'PAR', 'CO2']]
+  # df['minute'] = df['datetime'].dt.strftime('%m/%d/%Y %H')
+  # df['minute'] = pd.to_datetime(df['minute'], utc=False)
+  df['minute'] = df['datetime'].dt.floor('h')
+  df.drop('datetime', axis=1, inplace=True)
+  df = df.groupby(['minute', 'Chamber', 'actual_sp']).agg('mean')
+  df.reset_index(inplace=True)
+  df.loc[df['Chamber'] == 'A', 'minute'] = (df.loc[df['Chamber'] == 'A', 'minute'] + time_offset[0])
+  df.loc[df['Chamber'] == 'B', 'minute'] = (df.loc[df['Chamber'] == 'B', 'minute'] + time_offset[1])
+  return df
+
+# Functions reading data from entire data folders
+# ===============================================================
+
 # Don't think the cols argument actaully works here, at least not when loading with StringIO like I am with drive. Might work on the version for my local computer. Likely should take out, it's easy enough to choose the columns I want, not really any more work than doing it as an argument
-def data_from_date(date_folder, actual, time_offset = None, cols = None):
+def data_from_date_usb(date_folder, actual, time_offset = None, cols = None):
   if time_offset is None:
     time_offset = [pd.Timedelta(days=0), pd.Timedelta(days=0)]
   if not isinstance(actual, bool):
@@ -58,14 +163,15 @@ def data_from_date(date_folder, actual, time_offset = None, cols = None):
               if csv_file['title'] not in processed_files:
                 processed_files.add(csv_file['title'])
                 csv_id = csv_file['id']
-                file = drive.CreateFile({'id': csv_id})
-                csv_content = file.GetContentString()  # returns the raw CSV text
-                csv_file = StringIO(csv_content)
-                try:
-                  try:
-                    df = pd.read_csv(csv_file, usecols = cols)
-                  except UnicodeDecodeError:
-                    df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
+                df = read_drive_id(csv_id)
+                # file = drive.CreateFile({'id': csv_id})
+                # csv_content = file.GetContentString()  # returns the raw CSV text
+                # csv_file = StringIO(csv_content)
+                # try:
+                #   try:
+                #     df = pd.read_csv(csv_file, usecols = cols)
+                #   except UnicodeDecodeError:
+                #     df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
                   df = data_processing(df)
                   df['Chamber'] = chamber
                   df['Process'] = processes[process]
@@ -90,135 +196,73 @@ def data_from_date(date_folder, actual, time_offset = None, cols = None):
   data.dropna(how='any', inplace=True)
   return data
 
-def data_from_ethernet(date_folder, actual, time_offset = None, cols = None):
-  if 'ethernet' not in date_folder.name:
-    df = pd.DataFrame()
-    return df
+def data_from_date_ethernet(date_folder, time_offset = None, cols = None):
+  if 'thernet' not in date_folder['title']:
+    data = pd.DataFrame()
+    print('Ethernet folder not specified')
+    # st.write('Ethernet folder not specified')
+    return data
   else:
-    if time_offset is None:
-      time_offset = [pd.Timedelta(days=0), pd.Timedelta(days=0)]
-    if not isinstance(actual, bool):
-      raise ValueError('actual must be True or False')
-    elif actual == True:
-      string_id = 'actual'
-    elif actual == False:
-      string_id = 'sp'
-    
-
-
-
-
-
-processed_files = set()
-  list_df=[]
-  date_folder_id = date_folder['id']
-  for chamber_folder in drive.ListFile({'q':f"'{date_folder_id}' in parents and trashed=false"}).GetList():
-    if 'other' not in chamber_folder['title']:
-      # print(f"chamber folder {string_id}: {chamber_folder['title']}")
-      st.write(f"chamber folder {string_id}: {chamber_folder['title']}")
-      chamber_folder_id = chamber_folder['id']
-      chamber = chamber_folder['title'].split('/')[-1].split('_')[0][-1]
-      for process_folder in drive.ListFile({'q':f"'{chamber_folder_id}' in parents and trashed=false"}).GetList():
-        process_folder_id = process_folder['id']
-        for process in processes.keys():
-          for csv_file in drive.ListFile({'q':f"'{process_folder_id}' in parents and trashed=false"}).GetList():
-            if csv_file['title'].startswith('._'):
-              continue  # skip macOS hidden files
-            if csv_file['title'].split('.')[-1] == 'csv' and process in csv_file['title'] and string_id in csv_file['title']:
-              if csv_file['title'] not in processed_files:
-                processed_files.add(csv_file['title'])
-                csv_id = csv_file['id']
-                file = drive.CreateFile({'id': csv_id})
-                csv_content = file.GetContentString()  # returns the raw CSV text
-                csv_file = StringIO(csv_content)
-                try:
-                  try:
-                    df = pd.read_csv(csv_file, usecols = cols)
-                  except UnicodeDecodeError:
-                    df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
-                  df = data_processing(df)
-                  df['Chamber'] = chamber
-                  df['Process'] = processes[process]
-                  df.reset_index(inplace=True)
-                  list_df.append(df)
-                except Exception as e:
-                  print(f"Failed to read {csv_file['title']}: {e}")
-              else:
-                print(f"already processed {csv_file['title']}")
-  df = pd.concat(list_df, axis=0)
-  df.reset_index(inplace=True)
-  df['minute'] = df['datetime'].dt.strftime('%m/%d/%Y %H')
-  data = df.groupby(['minute', 'Chamber', 'Process']).agg({'Value':'mean'})
-  data.reset_index(inplace=True)
-  data = data.pivot(index=['minute', 'Chamber'], columns = 'Process', values = 'Value')
-  data.reset_index(inplace=True)
-  data.drop(columns = 'PAR_umol', inplace=True)
-  data.rename(columns={'PAR_max':'PAR'}, inplace=True)
-  data['minute'] = pd.to_datetime(data['minute'])
-  data.loc[data['Chamber'] == 'A', 'minute'] = (data.loc[data['Chamber'] == 'A', 'minute'] + time_offset[0])
-  data.loc[data['Chamber'] == 'B', 'minute'] = (data.loc[data['Chamber'] == 'B', 'minute'] + time_offset[1])
-  data.dropna(how='any', inplace=True)
-  return data
-
-
-
-
-
-def read_drive_id(ID, cols = None):
-  file = drive.CreateFile({'id': csv_id})
-  csv_content = file.GetContentString()  # returns the raw CSV text
-  csv_file = StringIO(csv_content)
-  try:
-    df = pd.read_csv(csv_file, usecols = cols)
-  except UnicodeDecodeError:
-    df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
-  return df
+    processed_files = set()
+    list_df = []
+    date_folder_id = date_folder['id']
+    for chamber_folder in drive.ListFile({'q':f"'{date_folder_id}' in parents and title contains 'Chamber' and trashed=false"}).GetList():
+      if 'other' not in chamber_folder['title'] and chamber_folder['mimeType'] == 'application/vnd.google-apps.folder': 
+        print(f"Reading folder {chamber_folder['title']}")
+        # st.write(f"Reading folder {chamber_folder['title']}")
+        chamber_folder_id = chamber_folder['id']
+        chamber = chamber_folder['title'].replace(' ','').split('Chamber')[1][0]
+        print(chamber)
+        for day_file in drive.ListFile({'q':f"'{chamber_folder_id}' in parents and title contains '.log' and not title contains 'pco2ccs' and trashed=false"}).GetList():
+          if not day_file['title'] in processed_files:
+            print(f"Reading {day_file['title']}")
+            # st.write(f"Reading {day_file['title']}")
+            df = read_drive_id(day_file['id'])
+            # print(df.head())
+            df['Chamber'] = chamber
+            df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+            list_df.append(df)
+            processed_files.add(day_file['title'])
+        if list_df:
+          try:
+            df = pd.concat(list_df, ignore_index = True)
+            data = data_cleaning_ethernet(df, time_offset)
+          except Exception as e:
+            print(f'failed to concatenate: {e}')
+            # st.write(f'failed to concatenate: {e}')
+        else:
+          # st.write('No files could be read')
+          print('No files could be read')
+          data = pd.DataFrame()
+  return [df,data]
+  
+# Old function before upgraded function to make it more robust and worked it into the larger data reading functions
+# def read_drive_id(ID, cols = None):
+#   file = drive.CreateFile({'id': csv_id})
+#   csv_content = file.GetContentString()  # returns the raw CSV text
+#   csv_file = StringIO(csv_content)
+#   try:
+#     df = pd.read_csv(csv_file, usecols = cols)
+#   except UnicodeDecodeError:
+#     df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
+#   return df
     
 offset_dict = {'20250509_Chamber_Data': [pd.Timedelta(days=30), pd.Timedelta(days=1)], '20250519_Chamber_Data': [pd.Timedelta(days=0), pd.Timedelta(days=-30)], '20250522_Chamber_Data':[pd.Timedelta(days=30), pd.Timedelta(days=0)], '20250602_Chamber_Data':[pd.Timedelta(days=40), pd.Timedelta(days=0)], '20250616_Chamber_Data': [pd.Timedelta(days=30), pd.Timedelta(days=0)], '20250620_Chamber_Data': [pd.Timedelta(days=30), pd.Timedelta(days=0)], '20250625_Chamber_Data' : [pd.Timedelta(days=-30), pd.Timedelta(days=0)], '20250627_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250701_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250702_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250703_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250707_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250714_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250721_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250725_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250804_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250806_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)], '20250808_Chamber_Data' : [pd.Timedelta(days=0), pd.Timedelta(days=0)]}
-  
-sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
-client_email = json.loads(sa_json_str)["client_email"]
-gauth = GoogleAuth()
-gauth.settings = {
-    'client_config_backend': 'service',
-    'service_config': {
-        'client_json_file_path': None,
-        'client_json': sa_json_str,
-        'client_user_email': client_email
-    },
-    'oauth_scope': ['https://www.googleapis.com/auth/drive']
-}
-gauth.ServiceAuth()
-drive = GoogleDrive(gauth)
 
-# # Below works on local computer. Above works on streamlit
-# # Setting up access to google drive
-# SERVICE_ACCOUNT_JSON = "/Users/sean/Documents/Sean/Lara Research/GC Data/operating-pod-469720-b9-214b1ebc73b3.json"
-# with open(SERVICE_ACCOUNT_JSON) as f:
-#     sa_info = json.load(f)
-# client_email = sa_info["client_email"]
-# gauth = GoogleAuth()
-# gauth.settings = {
-#     'client_config_backend': 'service',
-#     'service_config': {
-#         'client_json_file_path': SERVICE_ACCOUNT_JSON,
-#         'client_user_email': client_email
-#     },
-#     'oauth_scope': ['https://www.googleapis.com/auth/drive']
-# }
-# gauth.ServiceAuth()
-# drive = GoogleDrive(gauth)
+# Functions reading all data of a particular usb/ethernet type and concatenating
+# ================================================
 
-# Looking through folder with processed data and finding that most recent 
-processed_folder_id = '11x8zo1ZQYU_MuFh2A36f4TmGYaojEnpZ'
-search_term = 'gc_data_processed'
-if processed_folder_id:
-    query = f"'{processed_folder_id}' in parents and title contains '{search_term}' and trashed=false"
-else:
-    query = f"title contains '{search_term}' and trashed=false"
-file_list = drive.ListFile({'q': query}).GetList()
-date_dict = {}
-for file in file_list:
+def check_processed_data(processed_folder_id, drive, search_term = None, usb = True):
+  if usb = True:
+    if search_term is None:
+      search_term = 'gc_data_processed'
+  else:
+    if search_term is None:
+      search_term = 'gc_data_processed_inc_eth'
+  query = f"'{processed_folder_id}' in parents and title contains '{search_term}' and trashed=false"
+  file_list = drive.ListFile({'q':query}).GetList()
+  date_dict = {}
+  for file in file_list:
   match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}', file['title'])
   if match:
     date_str = match.group(0)
