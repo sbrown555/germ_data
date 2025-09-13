@@ -280,12 +280,70 @@ def check_processed_data(processed_folder_id, drive, search_term = None, etherne
   columns = ['minute', 'Chamber', 'actual_sp','Temp', 'RH', 'PAR', 'CO2']
   data_old = read_drive_id(csv_id, cols = columns)
   last_processing_time = data_old['minute'].max()
-  return [data_old, last_processing_time]
+  processed = {}
+  processed['data'] = data_old
+  processed['usb_prior_processing_time'] = data_old[data_old['ethernet/usb'] == 'usb']['minute'].max()
+  processed['ethernet_prior_processing_time'] = data_old[data_old['ethernet/usb'] == 'ethernet']['minute'].max()
+  return processed
 
 # Looking through "Chamber Data folder and accessing new uploads since last process date
 # General folder id is the id of the folder where the raw unprocessed download files for particular dates are
 # If ethernet is true it includes ethernet downloaded data. False looks only at the USB downloads
-def new_data(general_folder_id, drive, last_processing_date=None, ethernet=True):
+
+# Argument is the folder in which the date download folders for the ethernet downloads are located.
+def all_ethernet_data(general_folder_id, drive):
+  dict_df = {}
+  list_df = []
+  for download_folder in drive.ListFile({'q':f"'{parent_folder_id}' in parents and title contains 'Ethernet' and not title contains 'other' and trashed=false"}).GetList():
+    print(f'download_folder {download_folder}')
+    match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}',download_folder['title'])
+    if match:
+      date = match.group(0)
+      date = pd.to_datetime(date, format='%d%b%y')
+      print('Date = ', date)
+      data = data_from_ethernet(download_folder)
+      print(data.head())
+      dict_df[date] = data
+    else:
+      print(f"No download date found for {download_folder['title']}")
+      # st.write(f"No download date found for {download_folder['title']}")
+  list_df = [dict_df[date] for date in sorted(dict_df.keys())]
+  if list_df:
+    data = pd.concat(list_df, ignore_index=True)
+  else:
+    data=pd.DataFrame()
+  data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp'], keep='first', inplace=True)
+  return data
+
+def new_data_ethernet(general_folder_id, drive, ethernet_prior_processing_time):
+  dict_df = {}
+  list_df = []
+  list_date = []
+  for download_folder in drive.ListFile({'q':f"'{parent_folder_id}' in parents and title contains 'ethernet' and not title contains 'other' and trashed=false"}).GetList():
+    print(f'download_folder {download_folder}')
+    match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}',download_folder['title'])
+    if match:
+      date = match.group(0)
+      date = pd.to_datetime(date, format='%d%b%y')
+      if date > ethernet_prior_processing_time and date not in list_date:
+        print('Date = ', date)      
+        data = data_from_ethernet(download_folder)
+      # print(data.head())
+        dict_df[date] = data
+        list_df.append(data)
+        list_date.append(date)
+    else:
+      print(f"No download date found for {download_folder['title']}")
+      # st.write(f"No download date found for {download_folder['title']}")
+  list_df = [dict_df[date] for date in sorted(dict_df.keys())]
+  if list_df:
+    data = pd.concat(list_df, ignore_index=True)
+  else:
+    data=pd.DataFrame()
+  data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp'], keep='first', inplace=True)
+  return data
+
+def new_data_usb(general_folder_id, drive, last_processing_time=None, ethernet=True):
   if ethernet==True:
     query = f"'{general_folder_id}' in parents and trashed=false"
   else:
@@ -297,28 +355,28 @@ def new_data(general_folder_id, drive, last_processing_date=None, ethernet=True)
   file_dict = {}
   for file in file_list:
     try: 
-      match = re.search(
-      date = pd.to_datetime(file['title'].split('_')[0])
+      match = re.search(r'\d{8}', file['title'])
+      if match:
+        date = match.group(0)
+        date = pd.to_datetime(date)
+      else:
+        print(f"No download date found for {file['title']}")
+        # st.write(f"No download date found for {file['title']}")    
       date_list.append(date)
       if date > last_processing_date:
         file_dict[date] = file
-    except Exception as e:
-      file_name = file['title']
-      print(f"failed to review {file_name}: {e}")
-  current_date = max(date_list).strftime(format = '%d%b%y')
-
-
-  match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}',download_folder['title'])
-    if match:
-      date = match.group(0)
-      date = pd.to_datetime(date, format='%d%b%y')
-      print('Date = ', date)
-      data = data_from_ethernet(download_folder)
-      print(data.head())
-      dict_df[date] = data
+      except Exception as e:
+        file_name = file['title']
+        print(f"failed to review {file_name}: {e}")
+  # current_date = max(date_list).strftime(format = '%d%b%y')
+  for date in sorted(file_dict.keys()):
+    st.write(date)
+    if date in offset_dict.keys():
+      time_offset = offset_dict[date]
     else:
-      print(f"No download date found for {download_folder['title']}")
-      # st.write(f"No download date found for {download_folder['title']}")
+      time_offset = [pd.Timedelta(days=0), pd.Timedelta(days=0)]
+    if 'ethernet' in 
+    data_actual_new = data_from_date(file_dict[date], actual=True, time_offset = time_offset)
 
 # Adding as-yet unprocessed data to the primary dataset
 data = data_old
