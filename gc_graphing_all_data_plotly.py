@@ -136,7 +136,8 @@ drive = GoogleDrive(gauth)
 # drive = GoogleDrive(gauth)
 
 # Looking through folder with processed data and finding that most recent 
-processed_folder_id = '11x8zo1ZQYU_MuFh2A36f4TmGYaojEnpZ'
+# processed_folder_id = '11x8zo1ZQYU_MuFh2A36f4TmGYaojEnpZ'
+processed_folder_id = '1BMnQR0UQ_Re7iSOHdFJ0jPHTRkVTchP7'
 search_term = 'gc_data_processed'
 if processed_folder_id:
     query = f"'{processed_folder_id}' in parents and title contains '{search_term}' and trashed=false"
