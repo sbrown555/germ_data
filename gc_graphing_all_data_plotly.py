@@ -137,7 +137,7 @@ drive = GoogleDrive(gauth)
 
 # Looking through folder with processed data and finding that most recent 
 # processed_folder_id = '11x8zo1ZQYU_MuFh2A36f4TmGYaojEnpZ'
-processed_folder_id = '1BMnQR0UQ_Re7iSOHdFJ0jPHTRkVTchP7'
+processed_folder_id = '1v8Yu0IudRp_DiES99hVPMuF-Ma5lt5Zt'
 search_term = 'gc_data_processed'
 if processed_folder_id:
     query = f"'{processed_folder_id}' in parents and title contains '{search_term}' and trashed=false"
@@ -163,7 +163,8 @@ data_old = read_drive_id(csv_id, cols = columns)
 last_processing_time = data_old['minute'].max()
 
 # Looking through "Chamber Data folder and accessing new uploads since last process date
-general_folder_id = "11Cdt-JEEeNaDLNdFj002mWmt5BgnHBrO"
+# general_folder_id = "11Cdt-JEEeNaDLNdFj002mWmt5BgnHBrO"
+general_folder_id = "1BMnQR0UQ_Re7iSOHdFJ0jPHTRkVTchP7"
 file_list = drive.ListFile({'q': f"'{general_folder_id}' in parents and trashed=false"}).GetList()
 date_list = []
 file_dict = {}
