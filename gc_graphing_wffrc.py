@@ -199,26 +199,26 @@ for date in sorted(file_dict.keys()):
   # With data downloaded individually, the above cause some duplicate rows possibly, although it doesn't really make sense to me why
   # data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
 
-data_to_download = data.copy()
+# data_to_download = data.copy()
 
 
-# Check to see if there is already an up-to-date processed file, and if not save new processed file
-file_name = f"gc_data_processed_{current_date}.csv"
+# # Check to see if there is already an up-to-date processed file, and if not save new processed file
+# file_name = f"gc_data_processed_{current_date}.csv"
 
-duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
-if not duplicate_check:
-  st.write('There is an updated file!')
-else:
-  st.write('No new data')
-csv_buffer = StringIO()
-data_to_download.to_csv(csv_buffer, index=False)
-csv_bytes = csv_buffer.getvalue().encode('utf-8')  # convert to bytes
-st.download_button(
-    label=f"Download {file_name}",
-    data=csv_bytes,
-    file_name=file_name,
-    mime='text/csv'
-)
+# duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{file_name}' and trashed=false"}).GetList()
+# if not duplicate_check:
+#   st.write('There is an updated file!')
+# else:
+#   st.write('No new data')
+# csv_buffer = StringIO()
+# data_to_download.to_csv(csv_buffer, index=False)
+# csv_bytes = csv_buffer.getvalue().encode('utf-8')  # convert to bytes
+# st.download_button(
+#     label=f"Download {file_name}",
+#     data=csv_bytes,
+#     file_name=file_name,
+#     mime='text/csv'
+# )
 
 # Changing definitions of data so compatible with graphing code I copied and pasted here
 data['minute'] = pd.to_datetime(data['minute'])
