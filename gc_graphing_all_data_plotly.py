@@ -321,10 +321,10 @@ def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None
   st.write('is_actual', is_actual)
   actual = chamber_actual_check(actual = is_actual)[-1]
   st.write('actual', actual)
-  df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
+  df = df[df['actual_sp'] == ('actual' if is_actual else 'sp')]
   df_a = df[df['Chamber'] == 'A']
   df_b = df[df['Chamber'] == 'B']
-  actual_title = ('Actual' if actual else 'Set Point')
+  actual_title = ('Actual' if is_actual else 'Set Point')
   title = f'{var} in Both Chambers, {actual_title}'
   plotly_graph(df_a, df_b, var, var, colors=colors, legend_labels = ['A', 'B'], x_range=x_range, title=title, key=key)
 
