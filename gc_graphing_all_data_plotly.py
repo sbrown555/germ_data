@@ -318,7 +318,9 @@ for var in variables:
 # SP and actual (comparing side by side the setpoint and the actual measurements)
 
 def graph_chamber(df, var, is_actual, colors = ['purple', 'green'], x_range=None, key=None):
+  st.write('is_actual', is_actual)
   actual = chamber_actual_check(actual = is_actual)[-1]
+  st.write('actual', actual)
   df = df[df['actual_sp'] == ('actual' if actual else 'sp')]
   df_a = df[df['Chamber'] == 'A']
   df_b = df[df['Chamber'] == 'B']
