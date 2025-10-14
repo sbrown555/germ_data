@@ -328,9 +328,13 @@ variables = ['CO2', 'RH', 'Temp']
 for var in variables:
   for chamber in ['A','B']:
     graph_plotly_var_par(data, chamber, True, var, x_range = [min_date, max_date], key=f'{var}_with_PAR_chamber={chamber}')
-  df_actual = data[data['actual_sp'] == 'actual']
-  # df_sp = data[data['actual_sp'] == 'sp']
-  plotly_graph(df_actual, df_actual, 'PAR', 'CO2', colors=['blue', 'red'], axis_labels = None, legend_labels = None, title='CO2 and PAR in High CO2 Chamber', x_range=None, y_range1=[0,1200], y_range2=[0,1200], units=units, key=None)
+df_actual = data[data['actual_sp'] == 'actual']
+df_actual_a = df_actual[df_actual['Chamber']=='A']
+df_actual_b = df_actual[df_actual['Chamber'] == 'B']
+# df_sp = data[data['actual_sp'] == 'sp']
+plotly_graph(df_actual_a, df_actual_a, 'PAR', 'CO2', colors=['blue', 'red'], axis_labels = None, legend_labels = None, title='CO2 and PAR in High CO2 Chamber', x_range=None, y_range1=[0,1200], y_range2=[0,1200], units=units, key=None)
+plotly_graph(df_actual_b, df_actual_b, 'PAR', 'CO2', colors=['blue', 'red'], axis_labels = None, legend_labels = None, title='CO2 and PAR in High CO2 Chamber', x_range=None, y_range1=[0,1200], y_range2=[0,1200], units=units, key=None)
+
 
 # SP vs actual (comparing setpoint and actual variables for each chamber)
 def graph_actual_sp(df, var, chamber, colors = ['blue', 'orange'], x_range=None, key=None):
