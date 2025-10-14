@@ -230,7 +230,7 @@ data.dropna(how='any', inplace=True)
 data = data.sort_values('minute')
 min_date = data['minute'].min().to_pydatetime()
 max_date = data['minute'].max().to_pydatetime()
-data['Temp']=data['Temp']/10
+# data['Temp']=data['Temp']/10
 
 def chamber_actual_check(chamber=None, actual=None):
   co2_treatment = None
