@@ -302,7 +302,7 @@ if data2_actual_sp == 'actual':
 elif data2_actual_sp == 'sp':
   actual_2 = 'Set Point'
 if co2_treatment_1 == co2_treatment_2:
-  title = f'{data1_var} and {data2_var} in {co2_treatment_1}'
+  title = f'{data1_var} and {data2_var} in {co2_treatment_1} Chamber'
 else:
   title = 'Interactive Graph'
 legend_labels = [f'{actual_1} {data1_var} in {co2_treatment_1} Chamber', f'{actual_2} {data2_var} in {co2_treatment_2} Chamber']
