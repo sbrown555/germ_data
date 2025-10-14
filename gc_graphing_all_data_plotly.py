@@ -337,7 +337,7 @@ df_actual_b = df_actual[df_actual['Chamber'] == 'B']
 colors = ['#ff9999', '#9999ff']
 colors=['blue', 'red']
 plotly_graph(df_actual_a, df_actual_a, 'PAR', 'CO2', colors=colors, axis_labels = None, legend_labels = None, title='CO2 and PAR in High CO2 Chamber', x_range=None, y_range1=[0,1350], y_range2=[0,1350], units=units, key=None)
-plotly_graph(df_actual_b, df_actual_b, 'PAR', 'CO2', colors=colors, axis_labels = None, legend_labels = None, title='CO2 and PAR in High CO2 Chamber', x_range=None, y_range1=[0,1350], y_range2=[0,1350], units=units, key=None)
+plotly_graph(df_actual_b, df_actual_b, 'PAR', 'CO2', colors=colors, axis_labels = None, legend_labels = None, title='CO2 and PAR in Low CO2 Chamber', x_range=None, y_range1=[0,1350], y_range2=[0,1350], units=units, key=None)
 
 
 # SP vs actual (comparing setpoint and actual variables for each chamber)
