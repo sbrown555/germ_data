@@ -268,7 +268,7 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.update_yaxes(title_text=axis_labels[0], range = y_range1, secondary_y=False)
   fig.update_yaxes(title_text=axis_labels[1], range = y_range2, secondary_y=True)
   fig.update_layout(title=title)
-  if var1 == var2 and df1 == df2:
+  if var1 == var2 and df1.equals(df2):
     fig.data = tuple(list(fig.data)[:-1])  # removes last trace
   st.plotly_chart(fig, use_container_width=True, key=key)
 
