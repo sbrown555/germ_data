@@ -285,8 +285,27 @@ df1 = data[data['Chamber'] == data1_chamber]
 df1 = df1[df1['actual_sp'] == data1_actual_sp]
 df2 = data[data['Chamber'] == data2_chamber]
 df2 = df2[df2['actual_sp'] == data2_actual_sp]
-legend_labels = [f'{data1_actual_sp} {data1_var} in {data1_chamber}', f'{data2_actual_sp} {data2_var} in {data2_chamber}']
-title = 'Interactive Graph'
+if data1_chamber == 'A':
+  co2_treatment_1 = 'High CO2'
+elif data1_chamber == 'B':
+  co2_treatment_1 = 'Low CO2'
+if data1_actual_sp == 'actual':
+  actual_1 = 'Actual'
+elif data1_actual_sp == 'sp':
+  actual_1 = 'Set Point'
+if data2_chamber == 'A':
+  co2_treatment_2 = 'High CO2'
+elif data2_chamber == 'B':
+  co2_treatment_2 = 'Low CO2'
+if data2_actual_sp == 'actual':
+  actual_2 = 'Actual'
+elif data2_actual_sp == 'sp':
+  actual_2 = 'Set Point'
+if co2_treatment_1 == co2_treatment_2:
+  title = f'{data1_var} and {data2_var} in {co2_treatment_1}'
+else:
+  title = 'Interactive Graph'
+legend_labels = [f'{actual_1} {data1_var} in {co2_treatment_1} Chamber', f'{actual_2} {data2_var} in {co2_treatment_2} Chamber']
 plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, title = title, key='interactive_graph')
 
 
