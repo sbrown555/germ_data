@@ -181,6 +181,8 @@ current_date = max(date_list).strftime(format = '%d%b%y')
 
 # Adding as-yet unprocessed data to the primary dataset
 data = data_old
+data = data.loc[data['Temp'] > 36, 'Temp'] /= 10
+
 for date in sorted(file_dict.keys()):
   st.write(date)
   if date in offset_dict.keys():
@@ -195,6 +197,7 @@ for date in sorted(file_dict.keys()):
   data_sp_new = data_sp_new[columns]
   data_new = pd.concat([data_actual_new, data_sp_new])
   data_new = data_new[data_new['minute'] > last_processing_time]
+  data_new = data_new.loc[data_new['Temp'] > 36, 'Temp'] /= 10
   data = pd.concat([data_new, data])
   # With data downloaded individually, the above cause some duplicate rows possibly, although it doesn't really make sense to me why
   # data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
