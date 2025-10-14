@@ -269,7 +269,8 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.update_yaxes(title_text=axis_labels[1], range = y_range2, secondary_y=True)
   fig.update_layout(title=title)
   if var1 == var2 and df1.equals(df2):
-    fig.data = tuple(list(fig.data)[0:])  # removes last trace
+    fig.data = tuple(list(fig.data)[:-1])  # removes last trace
+    fig.update_traces(line=dict(color='red'))
   st.plotly_chart(fig, use_container_width=True, key=key)
 
 # Fully interavtive graph:
@@ -306,7 +307,7 @@ elif data2_actual_sp == 'sp':
 if co2_treatment_1 == co2_treatment_2:
   if data1_var == data2_var:
     title = f'{data1_var} in {co2_treatment_1} Chamber'
-    legend_labels = ['',f'{actual_1} in {co2_treatment_1} Chamber']
+    legend_labels = [f'{actual_1} in {co2_treatment_1} Chamber', '']
   else:
     title = f'{data1_var} and {data2_var} in {co2_treatment_1} Chamber'
     legend_labels = [f'{actual_1} {data1_var} in {co2_treatment_1} Chamber', f'{actual_2} {data2_var} in {co2_treatment_2} Chamber']
