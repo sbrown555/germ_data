@@ -310,7 +310,7 @@ if co2_treatment_1 == co2_treatment_2:
     legend_labels = ['', '']
   else:
     title = f'{data1_var} and {data2_var} in {co2_treatment_1} Chamber'
-    legend_labels = ['data1_var', 'data2_var']
+    legend_labels = [f{'data1_var'}, f{'data2_var'}]
 else:
   title = 'Interactive Graph'
   legend_labels = [f'{actual_1} {data1_var} in {co2_treatment_1} Chamber', f'{actual_2} {data2_var} in {co2_treatment_2} Chamber']
