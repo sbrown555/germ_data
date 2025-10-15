@@ -9,6 +9,11 @@ import matplotlib.dates as mdates
 from io import StringIO
 import streamlit as st
 import os
+import plotly.express as px 
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import re
+
 
 sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
 client_email = json.loads(sa_json_str)["client_email"]
