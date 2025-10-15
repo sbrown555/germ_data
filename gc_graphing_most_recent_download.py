@@ -135,8 +135,99 @@ output = st.selectbox('Choose a date to graph:', options)
 folder = file_dict[output]
 folder_id = folder['id']
 
-data = data_from_date(folder, time_offset, actual=True)
+data_ac = data_from_date(folder, time_offset, actual=True)
 data_sp = data_from_date(folder, time_offset, actual=False)
+
+data_ac['actual_sp']='actual'
+data_sp['actual_sp']='sp'
+
+data = pd.concat([data_ac, data_sp])
+
+def chamber_actual_check(chamber=None, actual=None):
+  co2_treatment = None
+  actual_sp = None
+  if chamber is not None:
+    if chamber == 'A':
+      co2_treatment = 'HiC'
+    elif chamber == 'B':
+      co2_treatment = 'LowC'
+    else:
+      st.error('Please select a chamber: A or B')
+  if actual is not None:
+    if actual == True:
+      actual_sp = 'Actual'
+    elif actual == False:
+      actual_sp = 'Set Point'
+    else:
+      st.error('Please specify if you want to graph actual or setpoint values')
+  return [co2_treatment, actual_sp]
+
+units = {'CO2':'ppm', 'Temp':'degrees C', 'RH':'%', 'PAR':'umol/mol'}
+def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range1=None, y_range2=None, units=units, key=None):
+  if axis_labels is None:
+    axis_labels = [f'{var1} {(units[var1])}', f'{var2} ({units[var2]})']
+  if legend_labels is None:
+    legend_labels = [var1, var2]
+  if var1 == var2 and y_range1 is None and y_range2 is None:
+    y_min = min(data1[var].min(), data2[var].min())
+    y_max = max(data1[var].max(), data2[var].max())
+    y_range1 = [y_min, y_max]
+    y_range2 = [y_min, y_max]
+  fig = make_subplots(specs=[[{"secondary_y": True}]])
+  fig.add_trace(go.Scatter(x=data1['minute'], y=data1[var1], name=legend_labels[0], mode='lines', line=dict(color = colors[0])),secondary_y=False)
+  fig.add_trace(go.Scatter(x=data2['minute'], y=data2[var2], name=legend_labels[1], mode='lines', line=dict(color = colors[1])),secondary_y=True)
+  fig.update_xaxes(title_text="Time", range=x_range)
+  fig.update_yaxes(title_text=axis_labels[0], range = y_range1, secondary_y=False)
+  fig.update_yaxes(title_text=axis_labels[1], range = y_range2, secondary_y=True)
+  fig.update_layout(title=title)
+  fig.update_layout(title_font_size=26, xaxis_title_font_size=20, yaxis_title_font_size=20)
+  fig.update_xaxes(tickfont=dict(size=20))
+  if var1 == var2 and df1.equals(df2):
+    fig.data = tuple(list(fig.data)[:-1])  # removes last trace
+    fig.update_traces(line=dict(color='red'))
+  st.plotly_chart(fig, use_container_width=True, key=key)
+
+
+
+data1_chamber = st.radio(label='Select which chamber to graph as the first line: ', options = ['A', 'B'], index = 0, key='data1_chamber_radio')
+data1_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the first line: ', options = ['actual', 'sp'], index = 0, key='data1_actual_sp_radio')
+data1_var = st.radio(label = 'Select which variable to graph as the first line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data1_var_radio')
+data2_chamber = st.radio(label='Select which chamber to graph as the second line: ', options = ['A', 'B'], index=1, key='data2_chamber_radio')
+data2_actual_sp = st.radio(label = 'Select whether to graph actual or set point as the second line: ', options = ['actual', 'sp'], index = 0, key='data2_actual_sp_radio')
+data2_var = st.radio(label = 'Select which variable to graph as the second line: ', options=['CO2', 'RH', 'PAR', 'Temp'], index = 0, key='data2_var_radio')
+
+df1 = data[data['Chamber'] == data1_chamber]
+df1 = df1[df1['actual_sp'] == data1_actual_sp]
+df2 = data[data['Chamber'] == data2_chamber]
+df2 = df2[df2['actual_sp'] == data2_actual_sp]
+if data1_chamber == 'A':
+  co2_treatment_1 = 'High CO2'
+elif data1_chamber == 'B':
+  co2_treatment_1 = 'Low CO2'
+if data1_actual_sp == 'actual':
+  actual_1 = 'Actual'
+elif data1_actual_sp == 'sp':
+  actual_1 = 'Set Point'
+if data2_chamber == 'A':
+  co2_treatment_2 = 'High CO2'
+elif data2_chamber == 'B':
+  co2_treatment_2 = 'Low CO2'
+if data2_actual_sp == 'actual':
+  actual_2 = 'Actual'
+elif data2_actual_sp == 'sp':
+  actual_2 = 'Set Point'
+if co2_treatment_1 == co2_treatment_2:
+  if data1_var == data2_var:
+    title = f'{data1_var} in {co2_treatment_1} Chamber'
+    legend_labels = ['', '']
+  else:
+    title = f'{data1_var} and {data2_var} in {co2_treatment_1} Chamber'
+    legend_labels = [f'{data1_var}', f'{data2_var}']
+else:
+  title = 'Interactive Graph'
+  legend_labels = [f'{actual_1} {data1_var} in {co2_treatment_1} Chamber', f'{actual_2} {data2_var} in {co2_treatment_2} Chamber']
+plotly_graph(df1, df2, data1_var, data2_var, legend_labels=legend_labels, title = title, key='interactive_graph')
+
 
 # Separating dataset by chamber for graphing
 
@@ -160,6 +251,9 @@ for df in list_df:
 
 # Regular graphing of variables with PAR for each chamber
 # Graphing zoomed CO2/PAR
+
+plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels = None, legend_labels = None, title=None, x_range=None, y_range1=None, y_range2=None, units=units, key=None):
+
 
 # plt.clf()
 fig, axes = plt.subplots(2,1, figsize=(8,6))
