@@ -261,8 +261,8 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   if legend_labels is None:
     legend_labels = [var1, var2]
   if var1 == var2 and y_range1 is None and y_range2 is None:
-    y_min = min(data1[var].min(), data2[var].min())
-    y_max = max(data1[var].max(), data2[var].max())
+    y_min = min(data1[var1].min(), data2[var1].min())
+    y_max = max(data1[var1].max(), data2[var1].max())
     y_range1 = [y_min, y_max]
     y_range2 = [y_min, y_max]
   fig = make_subplots(specs=[[{"secondary_y": True}]])
