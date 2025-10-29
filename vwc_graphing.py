@@ -173,7 +173,7 @@ for treatment_combo in summary_dict.keys():
   figures.append(fig)
 
 
-for fig in figure:
+for fig in figures:
   st.plotly_chart(fig, use_container_width=True, key=key)
 
 # figures[0]
