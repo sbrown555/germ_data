@@ -53,10 +53,10 @@ def read_drive_id(ID, cols = None):
   return df
   
 match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}', file_title)
-  if match:
-    download_date = match.group(0)
-  else:
-    st.write(f"No valid date found in {file['title']}")
+if match:
+  download_date = match.group(0)
+else:
+  st.write(f"No valid date found in {file['title']}")
 
 st.write(f"Interactive plots from germination datasheet: {download_date} download")
   
