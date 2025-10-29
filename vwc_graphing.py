@@ -47,8 +47,7 @@ def read_drive_id(ID, cols = None):
     df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
   return df
 
-id = '1Nwj8FKqPq5ILa6c0VlYL98QIP-7FNmAi8N8CPK39XjM'
-
+id = '1w4P14LWMUymx6LsWB0rFhhNjowrBDksb'
 data = read_drive_id(id)
 st.write(data.head())
 
