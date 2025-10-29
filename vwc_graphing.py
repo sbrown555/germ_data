@@ -49,8 +49,8 @@ drive = google_drive_access_streamlit()
 
 id = '1Nwj8FKqPq5ILa6c0VlYL98QIP-7FNmAi8N8CPK39XjM'
 
-data = read_drive_id(id)
-st.write(data.head())
+# data = read_drive_id(id)
+# st.write(data.head())
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
