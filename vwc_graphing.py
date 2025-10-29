@@ -63,7 +63,8 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json",
 client = gspread.authorize(creds)
 
 # Open the Google Sheet
-sheet = client.open_by_key(ID)  # or open_by_url("https://docs.google.com/spreadsheets/...")
+# sheet = client.open_by_key(ID)  # or open_by_url("https://docs.google.com/spreadsheets/...")
+sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Nwj8FKqPq5ILa6c0VlYL98QIP-7FNmAi8N8CPK39XjM/edit?usp=drive_link")
 
 # Select the first worksheet
 worksheet = sheet.get_worksheet(0)
