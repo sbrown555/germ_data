@@ -34,7 +34,7 @@ def google_drive_access_streamlit():
 drive = google_drive_access_streamlit()
 
 def read_drive_id(ID, cols = None):
-  file = drive.CreateFile({'id': csv_id})
+  file = drive.CreateFile({'id': ID})
   csv_content = file.GetContentString()  # returns the raw CSV text
   csv_file = StringIO(csv_content)
   try:
