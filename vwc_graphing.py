@@ -37,20 +37,20 @@ def google_drive_access_streamlit():
 
 drive = google_drive_access_streamlit()
 
-# def read_drive_id(ID, cols = None):
-#   file = drive.CreateFile({'id': ID})
-#   csv_content = file.GetContentString()  # returns the raw CSV text
-#   csv_file = StringIO(csv_content)
-#   try:
-#     df = pd.read_csv(csv_file, usecols = cols)
-#   except UnicodeDecodeError:
-#     df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
-#   return df
+def read_drive_id(ID, cols = None):
+  file = drive.CreateFile({'id': ID})
+  csv_content = file.GetContentString()  # returns the raw CSV text
+  csv_file = StringIO(csv_content)
+  try:
+    df = pd.read_csv(csv_file, usecols = cols)
+  except UnicodeDecodeError:
+    df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
+  return df
 
 id = '1Nwj8FKqPq5ILa6c0VlYL98QIP-7FNmAi8N8CPK39XjM'
 
-# # data = read_drive_id(id)
-# # st.write(data.head())
+data = read_drive_id(id)
+st.write(data.head())
 
 # import gspread
 # from oauth2client.service_account import ServiceAccountCredentials
@@ -75,20 +75,20 @@ id = '1Nwj8FKqPq5ILa6c0VlYL98QIP-7FNmAi8N8CPK39XjM'
 # import streamlit as st
 # st.write(data.head())
 
-# Load service account JSON from Streamlit secrets
-sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
-sa_json = json.loads(sa_json_str)
+# # Load service account JSON from Streamlit secrets
+# sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
+# sa_json = json.loads(sa_json_str)
 
-scope = ["https://spreadsheets.google.com/feeds",
-         "https://www.googleapis.com/auth/drive"]
+# scope = ["https://spreadsheets.google.com/feeds",
+#          "https://www.googleapis.com/auth/drive"]
 
-creds = ServiceAccountCredentials.from_json_keyfile_dict(sa_json, scope)
-client = gspread.authorize(creds)
+# creds = ServiceAccountCredentials.from_json_keyfile_dict(sa_json, scope)
+# client = gspread.authorize(creds)
 
-# Open the Google Sheet
-sheet_id = "YOUR_SHEET_ID_HERE"
-sheet = client.open_by_key(sheet_id)
-worksheet = sheet.get_worksheet(0)  # first sheet
+# # Open the Google Sheet
+# sheet_id = "YOUR_SHEET_ID_HERE"
+# sheet = client.open_by_key(sheet_id)
+# worksheet = sheet.get_worksheet(0)  # first sheet
 
-data = pd.DataFrame(worksheet.get_all_records())
-st.write(data.head())
+# data = pd.DataFrame(worksheet.get_all_records())
+# st.write(data.head())
