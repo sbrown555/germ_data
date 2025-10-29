@@ -50,19 +50,24 @@ def read_drive_id(ID, cols = None):
     df = pd.read_csv(csv_file, usecols = cols)
   except UnicodeDecodeError:
     df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
-  return df
+  return [df, file_title]
+
+drive = google_drive_access_streamlit()
+id = '1w4P14LWMUymx6LsWB0rFhhNjowrBDksb'
+[data, title] = read_drive_id(id)
+
   
-match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}', file_title)
+match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}', title)
 if match:
   download_date = match.group(0)
 else:
-  st.write(f"No valid date found in {file['title']}")
+  st.write(f"No valid date found in {title}")
 
 st.write(f"Interactive plots from germination datasheet: {download_date} download")
   
-drive = google_drive_access_streamlit()
-id = '1w4P14LWMUymx6LsWB0rFhhNjowrBDksb'
-data = read_drive_id(id)
+# drive = google_drive_access_streamlit()
+# id = '1w4P14LWMUymx6LsWB0rFhhNjowrBDksb'
+# data = read_drive_id(id)
 
 data.reset_index(inplace=True)
 data.rename(columns={'Pot Row':'Row', 'Pot Column':'Column'}, inplace=True)
