@@ -49,28 +49,46 @@ drive = google_drive_access_streamlit()
 
 id = '1Nwj8FKqPq5ILa6c0VlYL98QIP-7FNmAi8N8CPK39XjM'
 
-# data = read_drive_id(id)
+# # data = read_drive_id(id)
+# # st.write(data.head())
+
+# import gspread
+# from oauth2client.service_account import ServiceAccountCredentials
+# import pandas as pd
+
+# # Authenticate
+# scope = ["https://spreadsheets.google.com/feeds",
+#          "https://www.googleapis.com/auth/drive"]
+# creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", scope)
+# client = gspread.authorize(creds)
+
+# # Open the Google Sheet
+# # sheet = client.open_by_key(ID)  # or open_by_url("https://docs.google.com/spreadsheets/...")
+# sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Nwj8FKqPq5ILa6c0VlYL98QIP-7FNmAi8N8CPK39XjM/edit?usp=drive_link")
+
+# # Select the first worksheet
+# worksheet = sheet.get_worksheet(0)
+
+# # Get all data as DataFrame
+# data = pd.DataFrame(worksheet.get_all_records())
+
+# import streamlit as st
 # st.write(data.head())
 
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-import pandas as pd
+# Load service account JSON from Streamlit secrets
+sa_json_str = st.secrets["SERVICE_ACCOUNT_JSON"]
+sa_json = json.loads(sa_json_str)
 
-# Authenticate
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", scope)
+
+creds = ServiceAccountCredentials.from_json_keyfile_dict(sa_json, scope)
 client = gspread.authorize(creds)
 
 # Open the Google Sheet
-# sheet = client.open_by_key(ID)  # or open_by_url("https://docs.google.com/spreadsheets/...")
-sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Nwj8FKqPq5ILa6c0VlYL98QIP-7FNmAi8N8CPK39XjM/edit?usp=drive_link")
+sheet_id = "YOUR_SHEET_ID_HERE"
+sheet = client.open_by_key(sheet_id)
+worksheet = sheet.get_worksheet(0)  # first sheet
 
-# Select the first worksheet
-worksheet = sheet.get_worksheet(0)
-
-# Get all data as DataFrame
 data = pd.DataFrame(worksheet.get_all_records())
-
-import streamlit as st
 st.write(data.head())
