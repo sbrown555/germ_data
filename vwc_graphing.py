@@ -41,10 +41,9 @@ def google_drive_access_streamlit():
   drive = GoogleDrive(gauth)
   return drive
 
-drive = google_drive_access_streamlit()
-
 def read_drive_id(ID, cols = None):
   file = drive.CreateFile({'id': ID})
+  file_title = file['title'].
   csv_content = file.GetContentString()  # returns the raw CSV text
   csv_file = StringIO(csv_content)
   try:
@@ -52,7 +51,16 @@ def read_drive_id(ID, cols = None):
   except UnicodeDecodeError:
     df = pd.read_csv(csv_file, encoding='latin1', engine = 'python', on_bad_lines='skip', usecols = cols)
   return df
+  
+match = re.search(r'\d{1,2}[A-Za-z]{3}\d{2}', file_title)
+  if match:
+    download_date = match.group(0)
+  else:
+    st.write(f"No valid date found in {file['title']}")
 
+st.write(f"Interactive plots from germination datasheet: {download_date} download")
+  
+drive = google_drive_access_streamlit()
 id = '1w4P14LWMUymx6LsWB0rFhhNjowrBDksb'
 data = read_drive_id(id)
 
