@@ -214,7 +214,7 @@ search_name = f"gc_data_processed_{current_date}"
 duplicate_check = drive.ListFile({'q':f"'{processed_folder_id}' in parents and title contains '{search_name}' and trashed=false"}).GetList()
 if not duplicate_check:
   st.write('There is an updated file!')
-  file_name = search_name
+  file_name = f"{search_name}.csv"
 else:
   file_name = duplicate_check[0]['title']
   st.write('No new data')
