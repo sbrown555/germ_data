@@ -171,8 +171,8 @@ def plotly_go_graphing(summary, grouping_cols, title):
       legendgroup=legend_group_name
       ))
     fig.add_trace(go.Scatter(
-      x=pd.concat([group["date"], df["date"][::-1]]),
-      y=pd.concat([group["min"], df["max"][::-1]]),
+      x=pd.concat([group["date"], group["date"][::-1]]),
+      y=pd.concat([group["min"], group["max"][::-1]]),
       mode="lines",
       line=dict(color="gray", width=2, dash="dot"),
       name="Whiskers 1",
