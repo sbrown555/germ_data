@@ -178,6 +178,7 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
       #   arrayminus=group['mean'] - group['min'], # distance from mean to min
       #   visible=True
       #   ),
+      error_y = error_y_dict
       legendgroup=legend_group_name
     ))
     # Add shaded confidence interval
@@ -221,7 +222,7 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
   return fig  
 
 options = ['Min/Max', 'Confidence Intervals', 'Both', 'Neither']
-graph_elements = st.radio('Select which graph elements to include: ', options = options, index = 3)
+graph_elements = st.radio('Select which graph elements to include: ', options = options, index = 2)
 if graph_elements == 'Min/Max':
   min_max = True
   ci = False
