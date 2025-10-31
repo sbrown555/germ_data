@@ -146,43 +146,53 @@ for grouping_cols in treatment_combinations:
   summary_dict[treatment_combination_name] = summary
 
 
-def plotly_go_graphing(summary, grouping_cols, title, min_max = True):
+def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True):
   # Create a base figure
   fig = go.Figure()
   # Loop over groups (e.g., by Watering Regime)
   for name, group in summary.groupby(grouping_cols):
     legend_group_name = str(name)
+    if min_max:
+      error_y_dict = dict(
+      type='data',
+      symmetric=False,
+      array=group['max'] - group['mean'],      # distance from mean to max
+      arrayminus=group['mean'] - group['min'], # distance from mean to min
+      visible=True
+      )
+    else:
+      error_y_dict = None
     fig.add_trace(go.Scatter(
       x=group['date'], 
       y=group['mean'], 
       mode='lines', 
       name=f'{name} mean', 
+      # # error_y=dict(
+      # #   type='data',          # error bars are in data units
+      # #   array=group['ci95'],  # distance above each point
+      # #   visible=True),
       # error_y=dict(
-      #   type='data',          # error bars are in data units
-      #   array=group['ci95'],  # distance above each point
-      #   visible=True),
-      if min_max:
-        error_y=dict(
-          type='data',
-          symmetric=False,                  # asymmetric whiskers
-          array=group['max'] - group['mean'],      # distance from mean to max
-          arrayminus=group['mean'] - group['min'], # distance from mean to min
-          visible=True
-          ),
+      #   type='data',
+      #   symmetric=False,                  # asymmetric whiskers
+      #   array=group['max'] - group['mean'],      # distance from mean to max
+      #   arrayminus=group['mean'] - group['min'], # distance from mean to min
+      #   visible=True
+      #   ),
       legendgroup=legend_group_name
     ))
     # Add shaded confidence interval
-    fig.add_trace(go.Scatter(
-      x=pd.concat([group['date'], group['date'][::-1]]),
-      y=pd.concat([group['ci_upper'], group['ci_lower'][::-1]]),
-      fill='toself',
-      fillcolor='rgba(0,100,80,0.2)',
-      line=dict(color='rgba(255,255,255,0)'),
-      hoverinfo="skip",
-      showlegend=True, 
-      # legendgroup=legend_group_name
-      name=f"{name} confidence interval"
-      ))
+    if ci:
+      fig.add_trace(go.Scatter(
+        x=pd.concat([group['date'], group['date'][::-1]]),
+        y=pd.concat([group['ci_upper'], group['ci_lower'][::-1]]),
+        fill='toself',
+        fillcolor='rgba(0,100,80,0.2)',
+        line=dict(color='rgba(255,255,255,0)'),
+        hoverinfo="skip",
+        showlegend=True, 
+        # legendgroup=legend_group_name
+        name=f"{name} confidence interval"
+        ))
     # fig.add_trace(go.Scatter(
     #   x=pd.concat([group["date"], group["date"][::-1]]),
     #   y=pd.concat([group["min"], group["max"][::-1]]),
