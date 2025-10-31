@@ -146,7 +146,7 @@ for grouping_cols in treatment_combinations:
   summary_dict[treatment_combination_name] = summary
 
 
-def plotly_go_graphing(summary, grouping_cols, title):
+def plotly_go_graphing(summary, grouping_cols, title, min_max = True):
   # Create a base figure
   fig = go.Figure()
   # Loop over groups (e.g., by Watering Regime)
@@ -161,13 +161,14 @@ def plotly_go_graphing(summary, grouping_cols, title):
       #   type='data',          # error bars are in data units
       #   array=group['ci95'],  # distance above each point
       #   visible=True),
-      error_y=dict(
-        type='data',
-        symmetric=False,                  # asymmetric whiskers
-        array=group['max'] - group['mean'],      # distance from mean to max
-        arrayminus=group['mean'] - group['min'], # distance from mean to min
-        visible=True
-        ),
+      if min_max=True:
+        error_y=dict(
+          type='data',
+          symmetric=False,                  # asymmetric whiskers
+          array=group['max'] - group['mean'],      # distance from mean to max
+          arrayminus=group['mean'] - group['min'], # distance from mean to min
+          visible=True
+          ),
       legendgroup=legend_group_name
     ))
     # Add shaded confidence interval
