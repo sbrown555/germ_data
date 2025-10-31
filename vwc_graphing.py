@@ -220,12 +220,27 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
       )
   return fig  
 
+options = ['Min/Max', 'Confidence Intervals', 'Both', 'Neither']
+graph_elements = st.radio('Select which graph elements to include: ', options = options, index = 3)
+if graph_elements == 'Min/Max':
+  min_max = True
+  ci = False
+elif graph_elements == 'Confidence Intervals':
+  min_max = False
+  ci = True
+elif graph_elements == 'Both':
+  min_max = True
+  ci = True
+elif graph_elements == 'Either':
+  min_max = False
+  ci = False
+
 figures = []
 for treatment_combo in summary_dict.keys():
   title = f"VWC (%) with 95% Confidence Intervals: Grouped by {treatment_combo}"
   grouping_cols = grouping_dict[treatment_combo]
   summary = summary_dict[treatment_combo]
-  fig = plotly_go_graphing(summary, grouping_cols, title)
+  fig = plotly_go_graphing(summary, grouping_cols, title, min_max = min_max, ci = ci)
   figures.append(fig)
 
 
