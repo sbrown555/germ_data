@@ -157,12 +157,19 @@ def plotly_go_graphing(summary, grouping_cols, title):
       y=group['mean'], 
       mode='lines', 
       name=f'{name} mean', 
-      error_y=dict(
-        type='data',          # error bars are in data units
-        array=group['ci95'],  # distance above each point
-        visible=True),
-      legendgroup=legend_group_name
-      ))
+      # error_y=dict(
+      #   type='data',          # error bars are in data units
+      #   array=group['ci95'],  # distance above each point
+      #   visible=True),
+      # legendgroup=legend_group_name
+      # ))
+    error_y=dict(
+      type='data',
+      symmetric=False,                  # asymmetric whiskers
+      array=group['max'] - group['mean'],      # distance from mean to max
+      arrayminus=group['mean'] - group['min'], # distance from mean to min
+      visible=True
+      ),
     # Add shaded confidence interval
     fig.add_trace(go.Scatter(
       x=pd.concat([group['date'], group['date'][::-1]]),
