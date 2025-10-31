@@ -191,7 +191,7 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
         line=dict(color='rgba(255,255,255,0)'),
         hoverinfo="skip",
         showlegend=False, 
-        legendgroup=legend_group_name
+        legendgroup=legend_group_name,
         name=f"{name} confidence interval"
         ))
     # fig.add_trace(go.Scatter(
