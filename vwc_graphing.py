@@ -176,7 +176,7 @@ def plotly_go_graphing(summary, grouping_cols, title):
       mode="lines",
       line=dict(color="gray", width=2, dash="dot"),
       name="Whiskers 1",
-      legendgroup="legend_group_name",
+      legendgroup=legend_group_name,
       showlegend=False,
       ))
     fig.update_layout(
