@@ -116,7 +116,7 @@ def summarize(df, grouping_cols, confidence = None):
   if confidence is None:
     confidence = 0.95
   grouped = df.groupby(grouping_cols+['date'])['vwc']
-  summary = grouped.agg(['mean', 'count', 'std'])
+  summary = grouped.agg(['mean', 'count', 'std', 'min', 'max'])
   summary['sem'] = summary['std'] / np.sqrt(summary['count'])
   summary['ci95'] = summary['sem'] * stats.t.ppf((1 + confidence) / 2, summary['count'] - 1)
   summary['ci_upper'] = summary['mean'] + summary['ci95']
@@ -145,6 +145,7 @@ for grouping_cols in treatment_combinations:
   summary = summarize(df_oaks, grouping_cols)
   summary_dict[treatment_combination_name] = summary
 
+
 def plotly_go_graphing(summary, grouping_cols, title):
   # Create a base figure
   fig = go.Figure()
@@ -168,6 +169,15 @@ def plotly_go_graphing(summary, grouping_cols, title):
       hoverinfo="skip",
       showlegend=False, 
       legendgroup=legend_group_name
+      ))
+    fig.add_trace(go.Scatter(
+      x=pd.concat([group["date"], df["date"][::-1]]),
+      y=pd.concat([group["min"], df["max"][::-1]]),
+      mode="lines",
+      line=dict(color="gray", width=2, dash="dot"),
+      name="Whiskers 1",
+      legendgroup="legend_group_name",
+      showlegend=False,
       ))
     fig.update_layout(
       title=title,
