@@ -169,7 +169,7 @@ def plotly_go_graphing(summary, grouping_cols, title):
       array=group['max'] - group['mean'],      # distance from mean to max
       arrayminus=group['mean'] - group['min'], # distance from mean to min
       visible=True
-      ),
+      ))
     # Add shaded confidence interval
     fig.add_trace(go.Scatter(
       x=pd.concat([group['date'], group['date'][::-1]]),
