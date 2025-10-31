@@ -178,7 +178,7 @@ def plotly_go_graphing(summary, grouping_cols, title):
       fillcolor='rgba(0,100,80,0.2)',
       line=dict(color='rgba(255,255,255,0)'),
       hoverinfo="skip",
-      showlegend=False, 
+      showlegend=True, 
       legendgroup=legend_group_name
       ))
     # fig.add_trace(go.Scatter(
