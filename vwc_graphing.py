@@ -170,15 +170,25 @@ def plotly_go_graphing(summary, grouping_cols, title):
       showlegend=False, 
       legendgroup=legend_group_name
       ))
-    fig.add_trace(go.Scatter(
-      x=pd.concat([group["date"], group["date"][::-1]]),
-      y=pd.concat([group["min"], group["max"][::-1]]),
-      mode="lines",
-      line=dict(color="gray", width=2, dash="dot"),
-      name="Whiskers 1",
-      legendgroup=legend_group_name,
-      showlegend=False,
-      ))
+    # fig.add_trace(go.Scatter(
+    #   x=pd.concat([group["date"], group["date"][::-1]]),
+    #   y=pd.concat([group["min"], group["max"][::-1]]),
+    #   mode="lines",
+    #   line=dict(color="gray", width=2, dash="dot"),
+    #   name="Whiskers 1",
+    #   legendgroup=legend_group_name,
+    #   showlegend=False,
+    #   ))
+    for i, row in group.iterrows():
+      fig.add_trace(go.Scatter(
+        x=[row['date'], row['date']],
+        y=[row['min'], row['max']],
+        mode='lines',
+        line=dict(color='gray', width=1.5),
+        showlegend=False,
+        hoverinfo='skip',
+        legendgroup=legend_group_name
+        ))    
     fig.update_layout(
       title=title,
       xaxis_title="Date",
