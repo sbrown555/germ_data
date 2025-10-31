@@ -156,8 +156,11 @@ def plotly_go_graphing(summary, grouping_cols, title):
       x=group['date'], 
       y=group['mean'], 
       mode='lines', 
-      error_y=group['ci95'], 
       name=f'{name} mean', 
+      error_y=dict(
+        type='data',          # error bars are in data units
+        array=group['ci95'],  # distance above each point
+        visible=True)
       legendgroup=legend_group_name
       ))
     # Add shaded confidence interval
