@@ -161,7 +161,7 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True):
       #   type='data',          # error bars are in data units
       #   array=group['ci95'],  # distance above each point
       #   visible=True),
-      if min_max=True:
+      if min_max:
         error_y=dict(
           type='data',
           symmetric=False,                  # asymmetric whiskers
