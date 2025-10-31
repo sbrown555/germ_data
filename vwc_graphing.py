@@ -184,7 +184,7 @@ def plotly_go_graphing(summary, grouping_cols, title):
         x=[row['date'], row['date']],
         y=[row['min'], row['max']],
         mode='lines',
-        line=dict(color='gray', width=1.5),
+        line=dict(color='rgba(255,255,255,0)', width=1.5),
         showlegend=False,
         hoverinfo='skip',
         legendgroup=legend_group_name
