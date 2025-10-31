@@ -232,7 +232,7 @@ elif graph_elements == 'Confidence Intervals':
 elif graph_elements == 'Both':
   min_max = True
   ci = True
-elif graph_elements == 'Either':
+elif graph_elements == 'Neither':
   min_max = False
   ci = False
 
