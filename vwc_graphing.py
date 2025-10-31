@@ -178,7 +178,7 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
       #   arrayminus=group['mean'] - group['min'], # distance from mean to min
       #   visible=True
       #   ),
-      error_y = error_y_dict
+      error_y = error_y_dict, 
       legendgroup=legend_group_name
     ))
     # Add shaded confidence interval
