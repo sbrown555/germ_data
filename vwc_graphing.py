@@ -156,6 +156,7 @@ def plotly_go_graphing(summary, grouping_cols, title):
       x=group['date'], 
       y=group['mean'], 
       mode='lines', 
+      error_y=group['ci95'], 
       name=f'{name} mean', 
       legendgroup=legend_group_name
       ))
@@ -179,16 +180,16 @@ def plotly_go_graphing(summary, grouping_cols, title):
     #   legendgroup=legend_group_name,
     #   showlegend=False,
     #   ))
-    for i, row in group.iterrows():
-      fig.add_trace(go.Scatter(
-        x=[row['date'], row['date']],
-        y=[row['min'], row['max']],
-        mode='lines',
-        line=dict(color='rgba(255,255,255,0)', width=1.5),
-        showlegend=False,
-        hoverinfo='skip',
-        legendgroup=legend_group_name
-        ))    
+    # for i, row in group.iterrows():
+    #   fig.add_trace(go.Scatter(
+    #     x=[row['date'], row['date']],
+    #     y=[row['min'], row['max']],
+    #     mode='lines',
+    #     line=dict(color='rgba(255,255,255,0)', width=1.5),
+    #     showlegend=False,
+    #     hoverinfo='skip',
+    #     legendgroup=legend_group_name
+    #     ))    
     fig.update_layout(
       title=title,
       xaxis_title="Date",
