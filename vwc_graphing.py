@@ -146,7 +146,7 @@ def plotly_go(df, grouping_cols, title, var):
     xaxis_title="Date",
     yaxis_title=var,
     template="plotly_white",
-    hovermode = 'x unified',
+    hovermode = 'closest',
     )
   return fig
 
