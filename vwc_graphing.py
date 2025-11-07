@@ -181,6 +181,14 @@ df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).me
 
 date_format = '%m/%d'
 
+options = ['Single-Day VWC', 'Moving Average VWC']
+var_name = st.selectbox('Graph single-day VWC or {dates_window} moving average of VWC?', options, index=0, key='moving average selectbox')
+if var_name = options[0]:
+  var = 'vwc'
+if var_name = options[1]:
+  var = 'vwc_ma'
+
+
 for sp in ['quch', 'quwi']:
   date = date2.strftime(format = date_format)
   plot_title = f"{sp} VWC of wettest Low CO2 and driest High CO2 pots (based on average VWC as of {date})"
@@ -192,7 +200,7 @@ for sp in ['quch', 'quwi']:
   pots_sp = pots_hi + pots_low
   df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
   grouping_cols = ['pot_id']
-  fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = 'vwc')
+  fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = var)
   st.plotly_chart(fig, use_container_width=True)
 
 date2 = st.selectbox('Select date to compare individual VWC values: ', dates, index = dates.index(pd.to_datetime('2025-06-23')), key = 'individual date selectbox')
@@ -209,7 +217,7 @@ for sp in ['quch', 'quwi']:
   pots_sp = pots_hi + pots_low
   df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
   grouping_cols = ['pot_id']
-  fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = 'vwc')
+  fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = var)
   st.plotly_chart(fig, use_container_width=True)
 
 st.write('Plots of all pots separated by species')
