@@ -169,7 +169,7 @@ dates = df_oaks['date'].unique().tolist()
 date1 = st.selectbox('Select a start day for averaging: ', dates, index=0, key='date1 selectbox')
 
 date1 = pd.to_datetime(date1)
-date2 = st.selectbox('Select an end day for averaging: ', dates, index=options.index('2025-07-21'), key='date2 selectbox')
+date2 = st.selectbox('Select an end day for averaging: ', dates, index=dates.index('2025-07-21'), key='date2 selectbox')
 date2 = pd.to_datetime(date2)
 
 dates_window = len(df_oaks[(df_oaks['date']>=date1)&(df_oaks['date']<=date2)]['date'].unique())
@@ -190,7 +190,7 @@ for sp in ['quch', 'quwi']:
   fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = 'vwc')
   st.plotly_chart(fig, use_container_width=True)
 
-date2 = st.selectbox('Select date to compare individual VWC values: ', options, index = options.index('2025-06-23'), key = 'individual date selectbox')
+date2 = st.selectbox('Select date to compare individual VWC values: ', dates, index = dates.index('2025-06-23'), key = 'individual date selectbox')
 date2 = pd.to_datetime(date2)
 
 for sp in ['quch', 'quwi']:
