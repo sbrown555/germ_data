@@ -241,6 +241,8 @@ fig.show()
 
 
 st.write('Plots of wettest and driest pots in each treatment')
+# options = [['
+# st.selectbox('Choose grouping: ', options, key = 
 
 
 date1 = '2025-06-01'
@@ -250,7 +252,21 @@ dates_window = len(df_oaks[(df_oaks['date']>=date1)&(df_oaks['date']<=date2)]['d
 
 df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).mean()
 
+# def summarize(df, grouping_cols, confidence = None):
+#   if confidence is None:
+#     confidence = 0.95
+#   grouped = df.groupby(grouping_cols+['date'])['vwc']
+#   summary = grouped.agg(['mean', 'count', 'std', 'min', 'max'])
+#   summary['sem'] = summary['std'] / np.sqrt(summary['count'])
+#   summary['ci95'] = summary['sem'] * stats.t.ppf((1 + confidence) / 2, summary['count'] - 1)
+#   summary['ci_upper'] = summary['mean'] + summary['ci95']
+#   summary['ci_lower'] = summary['mean'] - summary['ci95']
+#   summary.reset_index(inplace=True)
+#   return summary
+  
+# st.radio('Plot individual pots or means?, ['individual', 'means'], key = 'purple green selectbox')
 
+grouping_cols = ['Species', 'Chamber', 'var_group']
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch)]
@@ -262,6 +278,7 @@ for sp in ['quch', 'quwi']:
     mapping = {pot_id: 'hi' for pot_id in pots_wet}
     mapping.update({pot_id: 'low' for pot_id in pots_dry})
     data['var_group'] = data['pot_id'].map(mapping)
+    data_summary = summarize(data, grouping_cols)
     # fig = plotly_go(data, ['pot_id', 'Chamber', 'Species'], title='',var = var)
     # fig.show()
     title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values'
