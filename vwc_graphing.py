@@ -124,6 +124,32 @@ def summarize(df, grouping_cols, confidence = None):
   summary.reset_index(inplace=True)
   return summary
 
+def plotly_go(df, grouping_cols, title, var):
+  fig = go.Figure()
+  for name, group in df.groupby(grouping_cols):
+    legend_group_name = str(name)
+    if group['Chamber'].iloc[0] == 'High CO2':
+      color = 'red'
+    else:
+      color = 'blue'
+    fig.add_trace(go.Scatter(
+      x=group['date'],
+      y=group[var],
+      mode = 'lines', 
+      name=f'{name}', 
+      line = dict(color=color),
+      hoverinfo=f'name+y',
+      hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Value: %{y}<extra></extra>",
+      legendgroup = legend_group_name))
+  fig.update_layout(
+    title=title,
+    xaxis_title="Date",
+    yaxis_title=var,
+    template="plotly_white",
+    hovermode = 'x',
+    )
+  return fig
+
 
 # restricting analysis to oak species
 df_oaks = df_wide[(df_wide['Species'] == 'quch') | (df_wide['Species'] == 'quwi')].copy()
@@ -133,6 +159,50 @@ df_oaks = df_wide[(df_wide['Species'] == 'quch') | (df_wide['Species'] == 'quwi'
 # renaming chambers for clarity of CO2 treatment
 df_oaks.loc[:,'Chamber'] = df_oaks.loc[:,'Chamber'].replace({'A':'High CO2', 'B':'Low CO2'})
 
+# =============================================================================================
+
+
+st.write('Plots of individual pots')
+
+dates = df_oaks['date'].unique().tolist()
+
+date1 = st.multiselect('Select a start day for averaging: ', dates, default = dates.min(), key='date1 multiselect')
+date2 = st.multiselect('Select an end day for averaging: ', dates, default = '2025-07-21', key='date2 multiselect')
+
+dates_window = len(df_oaks[(df_oaks['date']>=date1)&(df_oaks['date']<=date2)]['date'].unique())
+df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).mean()
+
+
+
+for sp in ['quch', 'quwi']:
+  plot_title = f'{sp} VWC of wettest Low CO2 and Driest High CO2 pots for (based on average VWC as of {date2})'
+  df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
+  df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
+  pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(4, 'vwc_ma')['pot_id'].tolist()
+  df_oaks_sp_low = df_oaks_sp[df_oaks_sp['Chamber'] == 'Low CO2']
+  pots_low = df_oaks_sp_low[df_oaks_sp_low['date'] == pd.to_datetime(date2)].nlargest(4, 'vwc_ma')['pot_id'].tolist()
+  pots_sp = pots_hi + pots_low
+  df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
+  grouping_cols = ['pot_id']
+  fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = 'vwc')
+  st.plotly_chart(fig, use_container_width=True)
+
+date2 = st.multiselect('Select date to compare individual VWC values: ', options, default = '2025-06-23', key = 'individual date multiselect')
+for sp in ['quch', 'quwi']:
+  plot_title = f'{sp} VWC of wettest Low CO2 and Driest High CO2 pots for (VWC as of {date2})'
+  df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
+  df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
+  pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(4, 'vwc')['pot_id'].tolist()
+  df_oaks_sp_low = df_oaks_sp[df_oaks_sp['Chamber'] == 'Low CO2']
+  pots_low = df_oaks_sp_low[df_oaks_sp_low['date'] == pd.to_datetime(date2)].nlargest(4, 'vwc')['pot_id'].tolist()
+  pots_sp = pots_hi + pots_low
+  df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
+  grouping_cols = ['pot_id']
+  fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = 'vwc')
+  st.plotly_chart(fig, use_container_width=True)
+
+
+st.write('Plots of summaries')
 treatments = ['Watering Regime', 'Chamber', 'Species']
 
 treatment_combinations = [list(t) for r in range(1, len(treatments)+1) for t in itertools.combinations(treatments, r)]
