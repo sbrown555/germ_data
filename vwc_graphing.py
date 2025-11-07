@@ -205,7 +205,7 @@ for sp in ['quch', 'quwi']:
   df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
   pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(replicate_number, 'vwc')['pot_id'].tolist()
   df_oaks_sp_low = df_oaks_sp[df_oaks_sp['Chamber'] == 'Low CO2']
-  pots_low = df_oaks_sp_low[df_oaks_sp_low['date'] == pd.to_datetime(date2)].nlargest(relicate_number, 'vwc')['pot_id'].tolist()
+  pots_low = df_oaks_sp_low[df_oaks_sp_low['date'] == pd.to_datetime(date2)].nlargest(replicate_number, 'vwc')['pot_id'].tolist()
   pots_sp = pots_hi + pots_low
   df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
   grouping_cols = ['pot_id']
