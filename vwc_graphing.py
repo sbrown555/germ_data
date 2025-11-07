@@ -79,6 +79,9 @@ data = data[cols]
 data.dropna(subset=['Species'], inplace=True)
 data['pot_id'] = data.apply(lambda row: f"{str(row['Chamber'])}{str(row['Bin']).split('.')[0]}{str(row['Row']).split('.')[0]}{str(row['Column']).split('.')[0]}", axis=1)
 
+# Creating a list of pots with seedlings turning pale
+pale_pots = data[data['Pale Scale 1-3'].fillna(0) != 0]['pot_id'].tolist()
+
 data.set_index('pot_id', inplace=True)
 
 # Dropping columns of soil moisture where only a few were measured
