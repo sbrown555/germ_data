@@ -166,8 +166,11 @@ st.write('Plots of individual pots')
 
 dates = df_oaks['date'].unique().tolist()
 
-date1 = st.multiselect('Select a start day for averaging: ', dates, default = dates.min(), key='date1 multiselect')
-date2 = st.multiselect('Select an end day for averaging: ', dates, default = '2025-07-21', key='date2 multiselect')
+date1 = st.selectbox('Select a start day for averaging: ', dates, index=0), key='date1 selectbox')
+
+date1 = pd.to_datetime(date1)
+date2 = st.selectbox('Select an end day for averaging: ', dates, index=options.index('2025-07-21', key='date2 selectbox')
+date2 = pd.to_datetime(date2)
 
 dates_window = len(df_oaks[(df_oaks['date']>=date1)&(df_oaks['date']<=date2)]['date'].unique())
 df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).mean()
@@ -187,7 +190,9 @@ for sp in ['quch', 'quwi']:
   fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = 'vwc')
   st.plotly_chart(fig, use_container_width=True)
 
-date2 = st.multiselect('Select date to compare individual VWC values: ', options, default = '2025-06-23', key = 'individual date multiselect')
+date2 = st.selectbox('Select date to compare individual VWC values: ', options, index = options.index('2025-06-23'), key = 'individual date selectbox')
+date2 = pd.to_datetime(date2)
+
 for sp in ['quch', 'quwi']:
   plot_title = f'{sp} VWC of wettest Low CO2 and Driest High CO2 pots for (VWC as of {date2})'
   df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
