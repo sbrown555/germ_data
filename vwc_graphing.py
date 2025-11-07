@@ -240,6 +240,61 @@ fig = plotly_go(df_oaks[(df_oaks['Species'] == 'quwi')], ['pot_id', 'Chamber'], 
 fig.show()
 
 
+st.write('Plots of wettest and driest pots in each treatment')
+
+
+date1 = '2025-06-01'
+date2 = '2025-07-01'
+var = 'vwc'
+dates_window = len(df_oaks[(df_oaks['date']>=date1)&(df_oaks['date']<=date2)]['date'].unique())
+
+df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).mean()
+
+
+for sp in ['quch', 'quwi']:
+  for ch in ['High CO2', 'Low CO2']:
+    data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch)]
+    data_comp = data_comp[data_comp['date'] == pd.to_datetime(date2)]
+    pots_wet = data_comp.nlargest(4, var)['pot_id'].tolist()
+    pots_dry = data_comp.nsmallest(4, var)['pot_id'].tolist()
+    pots = pots_wet + pots_dry
+    data = df_oaks[df_oaks['pot_id'].isin(pots)].copy()
+    mapping = {pot_id: 'hi' for pot_id in pots_wet}
+    mapping.update({pot_id: 'low' for pot_id in pots_dry})
+    data['var_group'] = data['pot_id'].map(mapping)
+    # fig = plotly_go(data, ['pot_id', 'Chamber', 'Species'], title='',var = var)
+    # fig.show()
+    title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values'
+    grouping_cols = ['Species','Chamber','pot_id', 'var_group']
+    fig = go.Figure()
+    for name, group in data.groupby(grouping_cols):
+      legend_group_name = str(name)
+      if group['var_group'].iloc[0] == 'hi':
+        color = 'purple'
+      else:
+        color = 'green'
+      fig.add_trace(go.Scatter(
+        x=group['date'],
+        y=group[var],
+        mode = 'lines', 
+        name=f'{name}', 
+        line = dict(color=color),
+        hoverinfo=f'name+y',
+        hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Value: %{y}<extra></extra>",
+        legendgroup = legend_group_name))
+      fig.update_layout(
+        title=title,
+        xaxis_title="Date",
+        yaxis_title=var,
+        template="plotly_white",
+        hovermode = 'x')
+    st.plotly_chart(fig, use_container_width=True)
+
+
+
+
+
+
 st.write('Plots of summaries')
 treatments = ['Watering Regime', 'Chamber', 'Species']
 
