@@ -156,10 +156,7 @@ def plotly_go(df, grouping_cols, title, var):
 
 # restricting analysis to oak species
 df_oaks = df_wide[(df_wide['Species'] == 'quch') | (df_wide['Species'] == 'quwi')].copy()
-# Excluding seedlings that are turning pale
-# data['pot_id'] = data.apply(lambda row: f"{str(row['Chamber'])}{str(row['Bin']).split('.')[0]}{str(row['Pot Row']).split('.')[0]}{str(row['Pot Column']).split('.')[0]}", axis=1)
 
-pale_pots = data[data['Pale Scale 1-3'].fillna(0) != 0]['pot_id'].tolist()
 
 
 # del df_wide
