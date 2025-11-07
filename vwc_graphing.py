@@ -166,7 +166,7 @@ st.write('Plots of individual pots')
 
 dates = df_oaks['date'].unique().tolist()
 
-date1 = st.selectbox('Select a start day for averaging: ', dates, index=0), key='date1 selectbox')
+date1 = st.selectbox('Select a start day for averaging: ', dates, index=0, key='date1 selectbox')
 
 date1 = pd.to_datetime(date1)
 date2 = st.selectbox('Select an end day for averaging: ', dates, index=options.index('2025-07-21', key='date2 selectbox')
