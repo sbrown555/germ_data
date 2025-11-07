@@ -146,7 +146,7 @@ def plotly_go(df, grouping_cols, title, var):
     xaxis_title="Date",
     yaxis_title=var,
     template="plotly_white",
-    hovermode = 'x',
+    hovermode = 'x unified',
     )
   return fig
 
@@ -212,7 +212,7 @@ for sp in ['quch', 'quwi']:
   fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = 'vwc')
   st.plotly_chart(fig, use_container_width=True)
 
-st.write('Plots of all plots separated by species')
+st.write('Plots of all pots separated by species')
 for sp in ['quch','quwi']:
   title = f'VWC of all pots of {sp} for each chamber'
   fig = plotly_go(df_oaks[df_oaks['Species'] == sp], ['pot_id', 'Chamber'], title = title, var = 'vwc')
