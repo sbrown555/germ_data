@@ -166,7 +166,7 @@ st.write('Plots of individual pots')
 
 replicate_number = st.number_input("Enter the number of replicates in each species/chamber combination:",  min_value=1, max_value=11, value=4,step=1)
 
-st.write(f"Number of replicates: {replicate_number}")
+# st.write(f"Number of replicates: {replicate_number}")
 
 dates = df_oaks['date'].unique().tolist()
 
@@ -178,7 +178,6 @@ date2 = pd.to_datetime(date2)
 
 dates_window = len(df_oaks[(df_oaks['date']>=date1)&(df_oaks['date']<=date2)]['date'].unique())
 df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).mean()
-
 
 date_format = '%m/%d'
 
@@ -212,6 +211,25 @@ for sp in ['quch', 'quwi']:
   grouping_cols = ['pot_id']
   fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = 'vwc')
   st.plotly_chart(fig, use_container_width=True)
+
+st.write('Plots of 
+for sp in ['quch','quwi']:
+  title = f'VWC of all pots of {sp} for each chamber'
+  fig = plotly_go(df_oaks[df_oaks['Species'] == sp], ['pot_id', 'Chamber'], title = title, var = 'vwc')
+  st.plotly_chart(fig, use_container_width=True)
+
+
+period_number = st.number_input("Choose number of period for moving average (calculated so that dates with fewer than required number of prior datapoints are calculated with the max number of datapoints available):",  min_value=1, max_value=len(dates), value=6,step=1)
+
+for sp in ['quch', 'quwi']
+  title = f"{period_number} period Moving Average of VWC of {sp} for each chamber"
+  fig = plotly_go(df_oaks[df_oaks['Species'] == sp], ['pot_id', 'Chamber'], title = title, var = 'vwc_ma')
+  st.plotly_chart(fig, use_container_width=True)
+
+fig = plotly_go(df_oaks[(df_oaks['Species'] == 'quch')], ['pot_id', 'Chamber'], title = '', var = 'vwc')
+fig.show()
+fig = plotly_go(df_oaks[(df_oaks['Species'] == 'quwi')], ['pot_id', 'Chamber'], title = '', var = 'vwc')
+fig.show()
 
 
 st.write('Plots of summaries')
