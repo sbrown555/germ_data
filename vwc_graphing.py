@@ -183,9 +183,9 @@ date_format = '%m/%d'
 
 options = ['Single-Day VWC', 'Moving Average VWC']
 var_name = st.selectbox('Graph single-day VWC or {dates_window} moving average of VWC?', options, index=0, key='moving average selectbox')
-if var_name = options[0]:
+if var_name == options[0]:
   var = 'vwc'
-if var_name = options[1]:
+if var_name == options[1]:
   var = 'vwc_ma'
 
 
