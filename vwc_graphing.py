@@ -221,7 +221,7 @@ for sp in ['quch','quwi']:
 
 period_number = st.number_input("Choose number of period for moving average (calculated so that dates with fewer than required number of prior datapoints are calculated with the max number of datapoints available):",  min_value=1, max_value=len(dates), value=6,step=1)
 
-for sp in ['quch', 'quwi']
+for sp in ['quch', 'quwi']:
   title = f"{period_number} period Moving Average of VWC of {sp} for each chamber"
   fig = plotly_go(df_oaks[df_oaks['Species'] == sp], ['pot_id', 'Chamber'], title = title, var = 'vwc_ma')
   st.plotly_chart(fig, use_container_width=True)
