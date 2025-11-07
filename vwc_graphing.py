@@ -180,7 +180,7 @@ date_format = '%m/%d'
 
 for sp in ['quch', 'quwi']:
   date = date2.strftime(format = date_format)
-  plot_title = f"{sp} VWC of wettest Low CO2 and driest High CO2 pots (based on average VWC as of {date)"
+  plot_title = f"{sp} VWC of wettest Low CO2 and driest High CO2 pots (based on average VWC as of {date})"
   df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
   df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
   pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(4, 'vwc_ma')['pot_id'].tolist()
