@@ -53,7 +53,9 @@ def read_drive_id(ID, cols = None):
   return [df, file_title]
 
 drive = google_drive_access_streamlit()
-id = '1w4P14LWMUymx6LsWB0rFhhNjowrBDksb'
+# id = '1w4P14LWMUymx6LsWB0rFhhNjowrBDksb'
+id = '1qp13r0kQSmwxgjG3whb8fL0YtvMmkepO'
+
 [data, title] = read_drive_id(id)
 
   
@@ -153,6 +155,9 @@ def plotly_go(df, grouping_cols, title, var):
 
 # restricting analysis to oak species
 df_oaks = df_wide[(df_wide['Species'] == 'quch') | (df_wide['Species'] == 'quwi')].copy()
+# Excluding seedlings that are turning pale
+pale_pots = data[data['Pale Scale 1'] != 0]['pot_id'].tolist()
+
 
 # del df_wide
 
