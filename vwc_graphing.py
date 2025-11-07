@@ -166,7 +166,7 @@ st.write('Plots of individual pots')
 
 replicate_number = st.number_input("Enter the number of replicates in each species/chamber combination:",  min_value=1, max_value=11, value=4,step=1)
 
-st.write(f"You entered: {my_number}")
+st.write(f"Number of replicates: {relicate_number}")
 
 dates = df_oaks['date'].unique().tolist()
 
