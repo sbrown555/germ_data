@@ -164,6 +164,10 @@ df_oaks.loc[:,'Chamber'] = df_oaks.loc[:,'Chamber'].replace({'A':'High CO2', 'B'
 
 st.write('Plots of individual pots')
 
+replicate_number = st.number_input("Enter the number of replicates in each species/chamber combination:",  min_value=1, max_value=11, value=4,step=1)
+
+st.write(f"You entered: {my_number}")
+
 dates = df_oaks['date'].unique().tolist()
 
 date1 = st.selectbox('Select a start day for averaging: ', dates, index=0, key='date1 selectbox')
@@ -183,9 +187,9 @@ for sp in ['quch', 'quwi']:
   plot_title = f"{sp} VWC of wettest Low CO2 and driest High CO2 pots (based on average VWC as of {date})"
   df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
   df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
-  pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(4, 'vwc_ma')['pot_id'].tolist()
+  pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(replicate_number, 'vwc_ma')['pot_id'].tolist()
   df_oaks_sp_low = df_oaks_sp[df_oaks_sp['Chamber'] == 'Low CO2']
-  pots_low = df_oaks_sp_low[df_oaks_sp_low['date'] == pd.to_datetime(date2)].nlargest(4, 'vwc_ma')['pot_id'].tolist()
+  pots_low = df_oaks_sp_low[df_oaks_sp_low['date'] == pd.to_datetime(date2)].nlargest(replicate_number, 'vwc_ma')['pot_id'].tolist()
   pots_sp = pots_hi + pots_low
   df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
   grouping_cols = ['pot_id']
@@ -200,9 +204,9 @@ for sp in ['quch', 'quwi']:
   plot_title = f"{sp} VWC of wettest Low CO2 and driest High CO2 pots (based on single-day VWC as of {date})"
   df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
   df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
-  pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(4, 'vwc')['pot_id'].tolist()
+  pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(replicate_number, 'vwc')['pot_id'].tolist()
   df_oaks_sp_low = df_oaks_sp[df_oaks_sp['Chamber'] == 'Low CO2']
-  pots_low = df_oaks_sp_low[df_oaks_sp_low['date'] == pd.to_datetime(date2)].nlargest(4, 'vwc')['pot_id'].tolist()
+  pots_low = df_oaks_sp_low[df_oaks_sp_low['date'] == pd.to_datetime(date2)].nlargest(relicate_number, 'vwc')['pot_id'].tolist()
   pots_sp = pots_hi + pots_low
   df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
   grouping_cols = ['pot_id']
