@@ -165,6 +165,7 @@ df_oaks.loc[:,'Chamber'] = df_oaks.loc[:,'Chamber'].replace({'A':'High CO2', 'B'
 st.write('Plots of individual pots')
 
 dates = df_oaks['date'].unique().tolist()
+st.write(dates)
 
 date1 = st.selectbox('Select a start day for averaging: ', dates, index=0, key='date1 selectbox')
 
