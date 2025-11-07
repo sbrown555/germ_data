@@ -160,6 +160,8 @@ def plotly_go(df, grouping_cols, title, var):
 # restricting analysis to oak species
 df_oaks = df_wide[(df_wide['Species'] == 'quch') | (df_wide['Species'] == 'quwi')].copy()
 
+# Filtering out pots from analysis that are turning pale
+df_oaks = df_oaks[~df_oaks['pot_id'].isin(pale_pots)]
 
 
 # del df_wide
