@@ -191,7 +191,7 @@ if var_name == options[1]:
 
 for sp in ['quch', 'quwi']:
   date = date2.strftime(format = date_format)
-  plot_title = f"{sp} VWC of wettest Low CO2 and driest High CO2 pots (based on average VWC as of {date})"
+  plot_title = f"{sp} {var_name} of wettest Low CO2 and driest High CO2 pots (based on average VWC as of {date})"
   df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
   df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
   pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(replicate_number, 'vwc_ma')['pot_id'].tolist()
@@ -208,7 +208,7 @@ date2 = pd.to_datetime(date2)
 
 for sp in ['quch', 'quwi']:
   date = date2.strftime(format = date_format)
-  plot_title = f"{sp} VWC of wettest Low CO2 and driest High CO2 pots (based on single-day VWC as of {date})"
+  plot_title = f"{sp} {var_name} of wettest Low CO2 and driest High CO2 pots (based on single-day VWC as of {date})"
   df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
   df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
   pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(replicate_number, 'vwc')['pot_id'].tolist()
