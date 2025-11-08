@@ -283,7 +283,8 @@ df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).me
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
-    title = f'{var} in {sp} and {ch} for all pots'
+    number_pots = len(data_comp['pot_id'].unique().tolist())
+    title = f'{var} in {sp} and {ch} for all pots. {number_pots} pots total'
     grouping_cols = ['Species','Chamber','pot_id']
     fig = go.Figure()
     for name, group in data_comp.groupby(grouping_cols):
@@ -312,6 +313,7 @@ grouping_cols = ['Species', 'Chamber', 'var_group']
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
+    number_pots = len(data_comp['pot_id'].unique().tolist())
     data_comp = data_comp[data_comp['date'] == pd.to_datetime(date2)]
     split_number_hi = (len(data_comp['pot_id'].unique().tolist()) + 1) // 2
     split_number_low = len(data_comp['pot_id'].unique().tolist()) // 2
@@ -322,7 +324,7 @@ for sp in ['quch', 'quwi']:
     mapping = {pot_id: 'hi' for pot_id in pots_wet}
     mapping.update({pot_id: 'low' for pot_id in pots_dry})
     data['var_group'] = data['pot_id'].map(mapping)
-    title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values'
+    title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values. {number_pots} pots total'
     grouping_cols = ['Species','Chamber','pot_id', 'var_group']
     fig = go.Figure()
     for name, group in data.groupby(grouping_cols):
@@ -357,6 +359,7 @@ grouping_cols = ['Species', 'Chamber', 'var_group']
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch)]
+    number_pots = len(data_comp['pot_id'].unique().tolist())
     data_comp = data_comp[data_comp['date'] == pd.to_datetime(date2)]
     pots_wet = data_comp.nlargest(4, var)['pot_id'].tolist()
     pots_dry = data_comp.nsmallest(4, var)['pot_id'].tolist()
@@ -368,7 +371,7 @@ for sp in ['quch', 'quwi']:
     data_summary = summarize(data, grouping_cols)
     # fig = plotly_go(data, ['pot_id', 'Chamber', 'Species'], title='',var = var)
     # fig.show()
-    title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values'
+    title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values. {number_pots} pots total'
     grouping_cols = ['Species','Chamber','pot_id', 'var_group']
     fig = go.Figure()
     for name, group in data.groupby(grouping_cols):
