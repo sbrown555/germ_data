@@ -452,7 +452,7 @@ df_dict = {}
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     treatment_combination_name = f'{sp} in {ch}'
-    df = df_oaks[(df_oaks['Species'] == sp) & df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
+    df = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
     df_dict[treatment_combination_name] = df
 
 
