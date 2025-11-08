@@ -284,8 +284,8 @@ for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
     data_comp = data_comp[data_comp['date'] == pd.to_datetime(date2)]
-    split_number_hi = (len(data_comp['pot_id'].unique().tolist())+1)//2
-    split_number_low = len(data_comp['pot_id'].unique().tolist()//2
+    split_number_hi = (len(data_comp['pot_id'].unique().tolist()) + 1) // 2
+    split_number_low = len(data_comp['pot_id'].unique().tolist()) // 2
     pots_wet = data_comp.nlargest(split_number_hi, var)['pot_id'].tolist()
     pots_dry = data_comp.nsmallest(split_number_low, var)['pot_id'].tolist()
     pots = pots_wet + pots_dry
