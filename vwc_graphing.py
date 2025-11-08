@@ -577,7 +577,6 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
         line=dict(color='rgba(255,255,255,0)'),
         hoverinfo=f'name+y',
         hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Value: %{y}<extra></extra>",
-        hovermode='closest',
         showlegend=False, 
         legendgroup=legend_group_name,
         name=f"{name} confidence interval"
@@ -605,9 +604,22 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
       title=title,
       xaxis_title="Date",
       yaxis_title="Mean VWC (%)",
-      template="plotly_white"
+      template="plotly_white",
+      hovermode='closest',
       )
   return fig  
+
+
+
+# hoverinfo=f'name+y',
+#       hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Value: %{y}<extra></extra>",
+#       legendgroup = legend_group_name))
+#   fig.update_layout(
+#     title=title,
+#     xaxis_title="Date",
+#     yaxis_title=var,
+#     template="plotly_white",
+#     hovermode = 'closest',
 
 
 options = ['Min/Max', 'Confidence Intervals', 'Both', 'Neither']
