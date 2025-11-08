@@ -195,6 +195,8 @@ df_oaks['vwc_msem'] = df_oaks['vwc_mstd'] / np.sqrt(df_oaks['vwc_mcount'])
 df_oaks['vwc_mci95'] = df_oaks['vwc_msem'] * stats.t.ppf((1+confidence) / 2, df_oaks['vwc_mcount'] -1)
 df_oaks['vwc_mci_upper'] = df_oaks['vwc_ma'] + df_oaks['vwc_mci95']
 df_oaks['vwc_mci_lower'] = df_oaks['vwc_ma'] - df_oaks['vwc_mci95']
+df_oaks['vwc_mmax'] = df_oaks['vwc'].rolling(window=dates_window, center=False).max()
+df_oaks['vwc_mmin'] = df_oaks['vwc'].rolling(window=dates_window, center=False).min()
 
 
 
@@ -260,7 +262,7 @@ for sp in ['quch', 'quwi']:
   df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
   grouping_cols = ['pot_id']
   fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = var)
-  st.plotly_chart(fig, use_container_width=True)
+  st.plotly_chart(fig, width='stretch')
 
 date2 = st.selectbox('Select date to compare individual VWC values: ', dates, index = dates.index(pd.to_datetime('2025-06-23')), key = 'individual date selectbox')
 date2 = pd.to_datetime(date2)
@@ -278,13 +280,13 @@ for sp in ['quch', 'quwi']:
   df_sp = df_oaks_sp[df_oaks_sp['pot_id'].isin(pots_sp)]
   grouping_cols = ['pot_id']
   fig  = plotly_go(df_sp, grouping_cols, title=plot_title, var = var)
-  st.plotly_chart(fig, use_container_width=True)
+  st.plotly_chart(fig, width='stretch')
 
 st.write('Plots of all pots separated by species')
 for sp in ['quch','quwi']:
   title = f'VWC of all pots of {sp} for each chamber'
   fig = plotly_go(df_oaks[(df_oaks['Species'] == sp) & (~df_oaks['pot_id'].isin(pale_pots))], ['pot_id', 'Chamber'], title = title, var = 'vwc')
-  st.plotly_chart(fig, use_container_width=True)
+  st.plotly_chart(fig, width='stretch')
 
   # df_oaks_sp = df_oaks[~df_oaks['pot_id'].isin(pale_pots)]
 
@@ -293,7 +295,7 @@ period_number = st.number_input("Choose number of period for moving average (cal
 for sp in ['quch', 'quwi']:
   title = f"{period_number} period Moving Average of VWC of {sp} for each chamber"
   fig = plotly_go(df_oaks[df_oaks['Species'] == sp], ['pot_id', 'Chamber'], title = title, var = 'vwc_ma')
-  st.plotly_chart(fig, use_container_width=True)
+  st.plotly_chart(fig, width='stretch')
 
 fig = plotly_go(df_oaks[(df_oaks['Species'] == 'quch')], ['pot_id', 'Chamber'], title = '', var = 'vwc')
 fig.show()
@@ -352,7 +354,7 @@ for sp in ['quch', 'quwi']:
         yaxis_title=var,
         template="plotly_white",
         hovermode = 'closest',)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 
@@ -396,7 +398,7 @@ for sp in ['quch', 'quwi']:
         yaxis_title=var,
         template="plotly_white",
         hovermode = 'closest',)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
   
 
 
@@ -444,7 +446,7 @@ for sp in ['quch', 'quwi']:
         yaxis_title=var,
         template="plotly_white",
         hovermode = 'closest',)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 # Graphing vwc_ma of all pots for each species and chamber combination, with vwc_ma defined as the moving average with the period selected above, and with confi
 
@@ -630,7 +632,7 @@ for treatment_combo in df_dict.keys():
 
 
 for fig in figures:
-  st.plotly_chart(fig, use_container_width=True)
+  st.plotly_chart(fig, width='stretch')
 
 
 
@@ -655,107 +657,107 @@ for grouping_cols in treatment_combinations:
   summary_dict[treatment_combination_name] = summary
 
 
-# def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True):
-#   # Create a base figure
-#   fig = go.Figure()
-#   # Loop over groups (e.g., by Watering Regime)
-#   for name, group in summary.groupby(grouping_cols):
-#     legend_group_name = str(name)
-#     if min_max:
-#       error_y_dict = dict(
-#       type='data',
-#       symmetric=False,
-#       array=group['max'] - group['mean'],      # distance from mean to max
-#       arrayminus=group['mean'] - group['min'], # distance from mean to min
-#       visible=True
-#       )
-#     else:
-#       error_y_dict = None
-#     fig.add_trace(go.Scatter(
-#       x=group['date'], 
-#       y=group['mean'], 
-#       mode='lines', 
-#       name=f'{name} mean', 
-#       # # error_y=dict(
-#       # #   type='data',          # error bars are in data units
-#       # #   array=group['ci95'],  # distance above each point
-#       # #   visible=True),
-#       # error_y=dict(
-#       #   type='data',
-#       #   symmetric=False,                  # asymmetric whiskers
-#       #   array=group['max'] - group['mean'],      # distance from mean to max
-#       #   arrayminus=group['mean'] - group['min'], # distance from mean to min
-#       #   visible=True
-#       #   ),
-#       error_y = error_y_dict, 
-#       legendgroup=legend_group_name
-#     ))
-#     # Add shaded confidence interval
-#     if ci:
-#       fig.add_trace(go.Scatter(
-#         x=pd.concat([group['date'], group['date'][::-1]]),
-#         y=pd.concat([group['ci_upper'], group['ci_lower'][::-1]]),
-#         fill='toself',
-#         fillcolor='rgba(0,100,80,0.2)',
-#         line=dict(color='rgba(255,255,255,0)'),
-#         hoverinfo="skip",
-#         showlegend=False, 
-#         legendgroup=legend_group_name,
-#         name=f"{name} confidence interval"
-#         ))
-#     # fig.add_trace(go.Scatter(
-#     #   x=pd.concat([group["date"], group["date"][::-1]]),
-#     #   y=pd.concat([group["min"], group["max"][::-1]]),
-#     #   mode="lines",
-#     #   line=dict(color="gray", width=2, dash="dot"),
-#     #   name="Whiskers 1",
-#     #   legendgroup=legend_group_name,
-#     #   showlegend=False,
-#     #   ))
-#     # for i, row in group.iterrows():
-#     #   fig.add_trace(go.Scatter(
-#     #     x=[row['date'], row['date']],
-#     #     y=[row['min'], row['max']],
-#     #     mode='lines',
-#     #     line=dict(color='rgba(255,255,255,0)', width=1.5),
-#     #     showlegend=False,
-#     #     hoverinfo='skip',
-#     #     legendgroup=legend_group_name
-#     #     ))    
-#     fig.update_layout(
-#       title=title,
-#       xaxis_title="Date",
-#       yaxis_title="Mean VWC (%)",
-#       template="plotly_white"
-#       )
-#   return fig  
+# # def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True):
+# #   # Create a base figure
+# #   fig = go.Figure()
+# #   # Loop over groups (e.g., by Watering Regime)
+# #   for name, group in summary.groupby(grouping_cols):
+# #     legend_group_name = str(name)
+# #     if min_max:
+# #       error_y_dict = dict(
+# #       type='data',
+# #       symmetric=False,
+# #       array=group['max'] - group['mean'],      # distance from mean to max
+# #       arrayminus=group['mean'] - group['min'], # distance from mean to min
+# #       visible=True
+# #       )
+# #     else:
+# #       error_y_dict = None
+# #     fig.add_trace(go.Scatter(
+# #       x=group['date'], 
+# #       y=group['mean'], 
+# #       mode='lines', 
+# #       name=f'{name} mean', 
+# #       # # error_y=dict(
+# #       # #   type='data',          # error bars are in data units
+# #       # #   array=group['ci95'],  # distance above each point
+# #       # #   visible=True),
+# #       # error_y=dict(
+# #       #   type='data',
+# #       #   symmetric=False,                  # asymmetric whiskers
+# #       #   array=group['max'] - group['mean'],      # distance from mean to max
+# #       #   arrayminus=group['mean'] - group['min'], # distance from mean to min
+# #       #   visible=True
+# #       #   ),
+# #       error_y = error_y_dict, 
+# #       legendgroup=legend_group_name
+# #     ))
+# #     # Add shaded confidence interval
+# #     if ci:
+# #       fig.add_trace(go.Scatter(
+# #         x=pd.concat([group['date'], group['date'][::-1]]),
+# #         y=pd.concat([group['ci_upper'], group['ci_lower'][::-1]]),
+# #         fill='toself',
+# #         fillcolor='rgba(0,100,80,0.2)',
+# #         line=dict(color='rgba(255,255,255,0)'),
+# #         hoverinfo="skip",
+# #         showlegend=False, 
+# #         legendgroup=legend_group_name,
+# #         name=f"{name} confidence interval"
+# #         ))
+# #     # fig.add_trace(go.Scatter(
+# #     #   x=pd.concat([group["date"], group["date"][::-1]]),
+# #     #   y=pd.concat([group["min"], group["max"][::-1]]),
+# #     #   mode="lines",
+# #     #   line=dict(color="gray", width=2, dash="dot"),
+# #     #   name="Whiskers 1",
+# #     #   legendgroup=legend_group_name,
+# #     #   showlegend=False,
+# #     #   ))
+# #     # for i, row in group.iterrows():
+# #     #   fig.add_trace(go.Scatter(
+# #     #     x=[row['date'], row['date']],
+# #     #     y=[row['min'], row['max']],
+# #     #     mode='lines',
+# #     #     line=dict(color='rgba(255,255,255,0)', width=1.5),
+# #     #     showlegend=False,
+# #     #     hoverinfo='skip',
+# #     #     legendgroup=legend_group_name
+# #     #     ))    
+# #     fig.update_layout(
+# #       title=title,
+# #       xaxis_title="Date",
+# #       yaxis_title="Mean VWC (%)",
+# #       template="plotly_white"
+# #       )
+# #   return fig  
 
-options = ['Min/Max', 'Confidence Intervals', 'Both', 'Neither']
-graph_elements = st.radio('Select which graph elements to include: ', options = options, index = 2)
-if graph_elements == 'Min/Max':
-  min_max = True
-  ci = False
-elif graph_elements == 'Confidence Intervals':
-  min_max = False
-  ci = True
-elif graph_elements == 'Both':
-  min_max = True
-  ci = True
-elif graph_elements == 'Neither':
-  min_max = False
-  ci = False
+# options = ['Min/Max', 'Confidence Intervals', 'Both', 'Neither']
+# graph_elements = st.radio('Select which graph elements to include: ', options = options, index = 2)
+# if graph_elements == 'Min/Max':
+#   min_max = True
+#   ci = False
+# elif graph_elements == 'Confidence Intervals':
+#   min_max = False
+#   ci = True
+# elif graph_elements == 'Both':
+#   min_max = True
+#   ci = True
+# elif graph_elements == 'Neither':
+#   min_max = False
+#   ci = False
 
-figures = []
-for treatment_combo in summary_dict.keys():
-  title = f"VWC (%) with 95% Confidence Intervals: Grouped by {treatment_combo}"
-  grouping_cols = grouping_dict[treatment_combo]
-  summary = summary_dict[treatment_combo]
-  fig = plotly_go_graphing(summary, grouping_cols, title, min_max = min_max, ci = ci)
-  figures.append(fig)
+# figures = []
+# for treatment_combo in summary_dict.keys():
+#   title = f"VWC (%) with 95% Confidence Intervals: Grouped by {treatment_combo}"
+#   grouping_cols = grouping_dict[treatment_combo]
+#   summary = summary_dict[treatment_combo]
+#   fig = plotly_go_graphing(summary, grouping_cols, title, min_max = min_max, ci = ci)
+#   figures.append(fig)
 
 
-for fig in figures:
-  st.plotly_chart(fig, use_container_width=True)
+# for fig in figures:
+#   st.plotly_chart(fig, width='stretch')
 
 # figures[0]
 # figures[1]
