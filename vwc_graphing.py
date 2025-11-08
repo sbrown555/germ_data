@@ -202,7 +202,8 @@ if var_name == options[1]:
 for sp in ['quch', 'quwi']:
   date = date2.strftime(format = date_format)
   plot_title = f"{sp} {var_name} of wettest Low CO2 and driest High CO2 pots (based on average VWC as of {date})"
-  df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
+  df_oaks_sp = df_oaks[~df_oaks['pot_id'].isin(pale_pots)]
+  df_oaks_sp = df_oaks_sp[(df_oaks_sp['Species'] == sp)]
   df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
   pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(replicate_number, 'vwc_ma')['pot_id'].tolist()
   df_oaks_sp_low = df_oaks_sp[df_oaks_sp['Chamber'] == 'Low CO2']
@@ -219,7 +220,8 @@ date2 = pd.to_datetime(date2)
 for sp in ['quch', 'quwi']:
   date = date2.strftime(format = date_format)
   plot_title = f"{sp} {var_name} of wettest Low CO2 and driest High CO2 pots (based on single-day VWC as of {date})"
-  df_oaks_sp = df_oaks[(df_oaks['Species'] == sp)]
+  df_oaks_sp = df_oaks[~df_oaks['pot_id'].isin(pale_pots)]
+  df_oaks_sp = df_oaks_sp[(df_oaks_sp['Species'] == sp)]
   df_oaks_sp_hi = df_oaks_sp[df_oaks_sp['Chamber'] == 'High CO2']
   pots_hi = df_oaks_sp_hi[df_oaks_sp_hi['date'] == pd.to_datetime(date2)].nsmallest(replicate_number, 'vwc')['pot_id'].tolist()
   df_oaks_sp_low = df_oaks_sp[df_oaks_sp['Chamber'] == 'Low CO2']
@@ -233,9 +235,10 @@ for sp in ['quch', 'quwi']:
 st.write('Plots of all pots separated by species')
 for sp in ['quch','quwi']:
   title = f'VWC of all pots of {sp} for each chamber'
-  fig = plotly_go(df_oaks[df_oaks['Species'] == sp], ['pot_id', 'Chamber'], title = title, var = 'vwc')
+  fig = plotly_go(df_oaks[(df_oaks['Species'] == sp) & (~df_oaks['pot_id'].isin(pale_pots))], ['pot_id', 'Chamber'], title = title, var = 'vwc')
   st.plotly_chart(fig, use_container_width=True)
 
+  # df_oaks_sp = df_oaks[~df_oaks['pot_id'].isin(pale_pots)]
 
 period_number = st.number_input("Choose number of period for moving average (calculated so that dates with fewer than required number of prior datapoints are calculated with the max number of datapoints available):",  min_value=1, max_value=len(dates), value=6,step=1)
 
@@ -279,10 +282,12 @@ df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).me
 grouping_cols = ['Species', 'Chamber', 'var_group']
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
-    data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch)]
+    data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
     data_comp = data_comp[data_comp['date'] == pd.to_datetime(date2)]
-    pots_wet = data_comp.nlargest(11, var)['pot_id'].tolist()
-    pots_dry = data_comp.nsmallest(11, var)['pot_id'].tolist()
+    split_number_hi = (len(data_comp['pot_id'].unique().tolist())+1)//2
+    split_number_low = len(data_comp['pot_id'].unique().tolist()//2
+    pots_wet = data_comp.nlargest(split_number_hi, var)['pot_id'].tolist()
+    pots_dry = data_comp.nsmallest(split_number_low, var)['pot_id'].tolist()
     pots = pots_wet + pots_dry
     data = df_oaks[df_oaks['pot_id'].isin(pots)].copy()
     mapping = {pot_id: 'hi' for pot_id in pots_wet}
