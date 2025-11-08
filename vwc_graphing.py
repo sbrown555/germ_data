@@ -284,7 +284,7 @@ for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
     title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values'
-    grouping_cols = ['Species','Chamber','pot_id', 'var_group']
+    grouping_cols = ['Species','Chamber','pot_id']
     fig = go.Figure()
     for name, group in data_comp.groupby(grouping_cols):
       legend_group_name = str(name)
