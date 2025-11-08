@@ -293,7 +293,7 @@ for sp in ['quch', 'quwi']:
         y=group[var],
         mode = 'lines', 
         name=f'{name}', 
-        line = dict(color=color),
+        # line = dict(color=color),
         hoverinfo=f'name+y',
         hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Value: %{y}<extra></extra>",
         legendgroup = legend_group_name))
