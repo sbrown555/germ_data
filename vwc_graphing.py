@@ -624,6 +624,7 @@ for treatment_combo in df_dict.keys():
   title = f"Moving average of VWC with 95% Confidence Intervals: Grouped by {treatment_combo}"
   grouping_cols = ['Species', 'Chamber', 'pot_id']
   df = df_dict[treatment_combo]
+  df.rename(columns={'vwc_ma':'mean','vwc_mstd':'std','vwc_msem':'sem','vwc_mci95':'ci95','vwc_mci_lower':'ci_lower','vwc_mci_upper':'ci_upper'})
   fig = plotly_go_graphing(df, grouping_cols, title, min_max = min_max, ci = ci)
   figures.append(fig)
 
