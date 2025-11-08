@@ -279,6 +279,35 @@ df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).me
   
 # st.radio('Plot individual pots or means?, ['individual', 'means'], key = 'purple green selectbox')
 
+
+for sp in ['quch', 'quwi']:
+  for ch in ['High CO2', 'Low CO2']:
+    data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
+    title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values'
+    grouping_cols = ['Species','Chamber','pot_id', 'var_group']
+    fig = go.Figure()
+    for name, group in data_comp.groupby(grouping_cols):
+      legend_group_name = str(name)
+      fig.add_trace(go.Scatter(
+        x=group['date'],
+        y=group[var],
+        mode = 'lines', 
+        name=f'{name}', 
+        line = dict(color=color),
+        hoverinfo=f'name+y',
+        hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Value: %{y}<extra></extra>",
+        legendgroup = legend_group_name))
+      fig.update_layout(
+        title=title,
+        xaxis_title="Date",
+        yaxis_title=var,
+        template="plotly_white",
+        hovermode = 'x')
+    st.plotly_chart(fig, use_container_width=True)
+
+
+
+
 grouping_cols = ['Species', 'Chamber', 'var_group']
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
@@ -293,9 +322,6 @@ for sp in ['quch', 'quwi']:
     mapping = {pot_id: 'hi' for pot_id in pots_wet}
     mapping.update({pot_id: 'low' for pot_id in pots_dry})
     data['var_group'] = data['pot_id'].map(mapping)
-    data_summary = summarize(data, grouping_cols)
-    # fig = plotly_go(data, ['pot_id', 'Chamber', 'Species'], title='',var = var)
-    # fig.show()
     title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values'
     grouping_cols = ['Species','Chamber','pot_id', 'var_group']
     fig = go.Figure()
