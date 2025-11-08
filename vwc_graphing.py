@@ -283,7 +283,7 @@ df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).me
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
-    title = f'{var} in {sp} and {ch} separated by highest and lowest {var} values'
+    title = f'{var} in {sp} and {ch} for all pots'
     grouping_cols = ['Species','Chamber','pot_id']
     fig = go.Figure()
     for name, group in data_comp.groupby(grouping_cols):
@@ -302,7 +302,7 @@ for sp in ['quch', 'quwi']:
         xaxis_title="Date",
         yaxis_title=var,
         template="plotly_white",
-        hovermode = 'x')
+        hovermode = 'closest',)
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -345,7 +345,7 @@ for sp in ['quch', 'quwi']:
         xaxis_title="Date",
         yaxis_title=var,
         template="plotly_white",
-        hovermode = 'x')
+        hovermode = 'closest',)
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -391,7 +391,7 @@ for sp in ['quch', 'quwi']:
         xaxis_title="Date",
         yaxis_title=var,
         template="plotly_white",
-        hovermode = 'x')
+        hovermode = 'closest',)
     st.plotly_chart(fig, use_container_width=True)
 
 
