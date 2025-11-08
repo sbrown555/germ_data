@@ -279,7 +279,7 @@ df_oaks['vwc_ma'] = df_oaks['vwc'].rolling(window=dates_window, center=False).me
   
 # st.radio('Plot individual pots or means?, ['individual', 'means'], key = 'purple green selectbox')
 
-
+# Graphing vwc of all pots for each species treatment combination
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
     data_comp = df_oaks[(df_oaks['Species'] == sp) & (df_oaks['Chamber'] == ch) & (~df_oaks['pot_id'].isin(pale_pots))]
@@ -308,7 +308,7 @@ for sp in ['quch', 'quwi']:
 
 
 
-
+# Graphing all pots of each combination of species and chamber, but with color coding based on higher or lower vwc
 grouping_cols = ['Species', 'Chamber', 'var_group']
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
@@ -349,11 +349,12 @@ for sp in ['quch', 'quwi']:
         template="plotly_white",
         hovermode = 'closest',)
     st.plotly_chart(fig, use_container_width=True)
+  
 
 
 
 
-
+# Graphing top 4 and bottom 4 VWC for each combination of species and chamber
 
 grouping_cols = ['Species', 'Chamber', 'var_group']
 for sp in ['quch', 'quwi']:
@@ -397,6 +398,90 @@ for sp in ['quch', 'quwi']:
         hovermode = 'closest',)
     st.plotly_chart(fig, use_container_width=True)
 
+# Graphing vwc_ma of all pots for each species and chamber combination, with vwc_ma defined as the moving average with the period selected above, and with confi
+for sp in ['quch', 'quwi']:
+  for ch in ['High CO2', 'Low CO2']:
+  treatment_combination_name = f'{sp} in {ch}'
+  summary = summarize(df_oaks, [sp, ch])
+  summary_dict[treatment_combination_name] = summary
+
+
+def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True):
+  # Create a base figure
+  fig = go.Figure()
+  # Loop over groups (e.g., by Watering Regime)
+  for name, group in summary.groupby(grouping_cols):
+    legend_group_name = str(name)
+    if min_max:
+      error_y_dict = dict(
+      type='data',
+      symmetric=False,
+      array=group['max'] - group['mean'],      # distance from mean to max
+      arrayminus=group['mean'] - group['min'], # distance from mean to min
+      visible=True
+      )
+    else:
+      error_y_dict = None
+    fig.add_trace(go.Scatter(
+      x=group['date'], 
+      y=group['mean'], 
+      mode='lines', 
+      name=f'{name} mean', 
+      error_y = error_y_dict, 
+      legendgroup=legend_group_name
+    ))
+    # Add shaded confidence interval
+    if ci:
+      fig.add_trace(go.Scatter(
+        x=pd.concat([group['date'], group['date'][::-1]]),
+        y=pd.concat([group['ci_upper'], group['ci_lower'][::-1]]),
+        fill='toself',
+        fillcolor='rgba(0,100,80,0.2)',
+        line=dict(color='rgba(255,255,255,0)'),
+        hoverinfo="skip",
+        showlegend=False, 
+        legendgroup=legend_group_name,
+        name=f"{name} confidence interval"
+        )) 
+    fig.update_layout(
+      title=title,
+      xaxis_title="Date",
+      yaxis_title="Mean VWC (%)",
+      template="plotly_white"
+      )
+  return fig  
+
+options = ['Min/Max', 'Confidence Intervals', 'Both', 'Neither']
+graph_elements = st.radio('Select which graph elements to include: ', options = options, index = 2)
+if graph_elements == 'Min/Max':
+  min_max = True
+  ci = False
+elif graph_elements == 'Confidence Intervals':
+  min_max = False
+  ci = True
+elif graph_elements == 'Both':
+  min_max = True
+  ci = True
+elif graph_elements == 'Neither':
+  min_max = False
+  ci = False
+
+figures = []
+for treatment_combo in summary_dict.keys():
+  title = f"VWC (%) with 95% Confidence Intervals: Grouped by {treatment_combo}"
+  grouping_cols = grouping_dict[treatment_combo]
+  summary = summary_dict[treatment_combo]
+  fig = plotly_go_graphing(summary, grouping_cols, title, min_max = min_max, ci = ci)
+  figures.append(fig)
+
+
+for fig in figures:
+  st.plotly_chart(fig, use_container_width=True)
+
+
+
+
+# Graphing summaries of all treatment combinations
 
 
 
