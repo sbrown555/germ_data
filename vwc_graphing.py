@@ -401,9 +401,9 @@ for sp in ['quch', 'quwi']:
 # Graphing vwc_ma of all pots for each species and chamber combination, with vwc_ma defined as the moving average with the period selected above, and with confi
 for sp in ['quch', 'quwi']:
   for ch in ['High CO2', 'Low CO2']:
-  treatment_combination_name = f'{sp} in {ch}'
-  summary = summarize(df_oaks, [sp, ch])
-  summary_dict[treatment_combination_name] = summary
+    treatment_combination_name = f'{sp} in {ch}'
+    summary = summarize(df_oaks, [sp, ch])
+    summary_dict[treatment_combination_name] = summary
 
 
 def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True):
