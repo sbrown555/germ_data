@@ -163,9 +163,6 @@ df_oaks = df_wide[(df_wide['Species'] == 'quch') | (df_wide['Species'] == 'quwi'
 # Filtering out pots from analysis that are turning pale
 df_oaks = df_oaks[~df_oaks['pot_id'].isin(pale_pots)]
 
-
-# del df_wide
-
 # renaming chambers for clarity of CO2 treatment
 df_oaks.loc[:,'Chamber'] = df_oaks.loc[:,'Chamber'].replace({'A':'High CO2', 'B':'Low CO2'})
 
@@ -197,46 +194,6 @@ df_oaks['vwc_mci_upper'] = df_oaks['vwc_ma'] + df_oaks['vwc_mci95']
 df_oaks['vwc_mci_lower'] = df_oaks['vwc_ma'] - df_oaks['vwc_mci95']
 df_oaks['vwc_mmax'] = df_oaks['vwc'].rolling(window=dates_window, center=False).max()
 df_oaks['vwc_mmin'] = df_oaks['vwc'].rolling(window=dates_window, center=False).min()
-
-
-
-# df_oaks['vwc_mt_crit'] = t.ppf((1 + confidence) / 2, n - 1)
-
-# df_oaks['ci95'] = summary['sem'] * stats.t.ppf((1 + confidence) / 2, summary['count'] - 1)
-
-
-
-# = 0.95
-# #   grouped = df.groupby(grouping_cols+['date'])['vwc']
-# #   summary = grouped.agg(['mean', 'count', 'std', 'min', 'max'])
-# #   summary['sem'] = summary['std'] / np.sqrt(summary['count'])
-# #   summary['ci95'] = summary['sem'] * stats.t.ppf((1 + confidence) / 2, summary['count'] - 1)
-# #   summary['ci_upper'] = summary['mean'] + summary['ci95']
-#   summary['ci_upper'] = summary['mean'] + summary['ci95']
-#   summary['ci_lower'] = summary['mean'] - summary['ci95']
-#   summary.reset_index(inplace=True)
-
-
-# # Rolling stats
-# rolling_mean = data.rolling(window).mean()
-# rolling_std = data.rolling(window).std()
-# n = data.rolling(window).count()
-
-# # t critical value
-# t_crit = t.ppf((1 + confidence) / 2, n - 1)
-
-# # Standard error
-# se = rolling_std / np.sqrt(n)
-
-# # Confidence intervals
-# ci_upper = rolling_mean + t_crit * se
-# ci_lower = rolling_mean - t_crit * se
-
-
-
-
-
-
 
 
 date_format = '%m/%d'
@@ -552,7 +509,9 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
       x=group['date'], 
       y=group['mean'], 
       mode='lines', 
-      name=f'{name} mean', 
+      name=f'{name} mean',
+      hoverinfo=f'name+y',
+      hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Value: %{y}<extra></extra>",
       # # error_y=dict(
       # #   type='data',          # error bars are in data units
       # #   array=group['ci95'],  # distance above each point
@@ -575,8 +534,7 @@ def plotly_go_graphing(summary, grouping_cols, title, min_max = True, ci = True)
         fill='toself',
         fillcolor='rgba(0,100,80,0.2)',
         line=dict(color='rgba(255,255,255,0)'),
-        hoverinfo=f'name+y',
-        hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Value: %{y}<extra></extra>",
+        hoverinfo='skip',
         showlegend=False, 
         legendgroup=legend_group_name,
         name=f"{name} confidence interval"
