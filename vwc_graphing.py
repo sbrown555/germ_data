@@ -180,7 +180,7 @@ for list in list_list:
   var='vwc'
   df_graph = df_oaks[df_oaks['pot_id'].isin(list)]
   grouping_cols = ['pot_id']
-  title = ''
+  plot_title = ''
   fig  = plotly_go(df_graph, grouping_cols, title=plot_title, var = var)
   
   st.plotly_chart(fig, width='stretch')
