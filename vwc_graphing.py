@@ -166,6 +166,25 @@ df_oaks = df_oaks[~df_oaks['pot_id'].isin(pale_pots)]
 # renaming chambers for clarity of CO2 treatment
 df_oaks.loc[:,'Chamber'] = df_oaks.loc[:,'Chamber'].replace({'A':'High CO2', 'B':'Low CO2'})
 
+quch_1_list = ['A132','A222','A832','A1132', 'B632','B743','B823','B941']
+quwi_1_list = ['A241','A711','A833','A1111','B141','B313','B931','B1021']
+
+quch_hi = ['A132','A222','A422','A631','A732','A832','A911','A943']
+quch_low = ['B123',''B311','B422','B511','B721','B831','B941']
+
+quwi_hi = ['A113','A211','A241','A531','A641','A711','A811','A1141']
+
+list_list = [quch_1_list,quwi_1_list, quch_hi, quch_low, quwi_hi]
+
+for list in list_list:
+  var='vwc'
+  df_graph = df_oaks[df_oaks['pot_id'].isin(list)]
+  grouping_cols = ['pot_id']
+
+  fig  = plotly_go(df_graph, grouping_cols, title=plot_title, var = var)
+  
+  st.plotly_chart(fig, width='stretch')
+
 # =============================================================================================
 
 
