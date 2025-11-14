@@ -184,7 +184,7 @@ list_dict['quwi_hi'] = quwi_hi
 for list in list_dict.keys():
   var='vwc'
   pot_list = list_dict[list]
-  df_oaks[df_oaks['pot_id'].isin(pot_list)]
+  df_graph = df_oaks[df_oaks['pot_id'].isin(pot_list)]
   grouping_cols = ['pot_id']
   plot_title = 'list'
   fig  = plotly_go(df_graph, grouping_cols, title=plot_title, var = var)
