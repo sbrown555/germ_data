@@ -174,13 +174,19 @@ quch_low = ['B123','B311','B422','B511','B721','B831','B941']
 
 quwi_hi = ['A113','A211','A241','A531','A641','A711','A811','A1141']
 
-list_list = [quch_1_list,quwi_1_list, quch_hi, quch_low, quwi_hi]
+list_dict = {}
+list_dict['quch_1'] = quch_1_list
+list_dict['quwi_1'] = quwi_1_list
+list_dict['quch_hi'] = quch_hi
+list_dict['quch_low'] = quch_low
+list_dict['quwi_hi'] = quwi_hi
 
-for list in list_list:
+for list in list_dict.keys():
   var='vwc'
-  df_graph = df_oaks[df_oaks['pot_id'].isin(list)]
+  pot_list = list_dict[list]
+  df_oaks[df_oaks['pot_id'].isin(pot_list)]
   grouping_cols = ['pot_id']
-  plot_title = ''
+  plot_title = 'list'
   fig  = plotly_go(df_graph, grouping_cols, title=plot_title, var = var)
   
   st.plotly_chart(fig, width='stretch')
