@@ -279,7 +279,7 @@ def plotly_graph(data1, data2, var1, var2, colors=['blue', 'red'], axis_labels =
   fig.update_layout(title=title)
   fig.update_layout(title_font_size=26, xaxis_title_font_size=20, yaxis_title_font_size=20)
   fig.update_xaxes(tickfont=dict(size=20))
-  if var1 == var2 and df1.equals(df2):
+  if var1 == var2 and data1.equals(data2):
     fig.data = tuple(list(fig.data)[:-1])  # removes last trace
     fig.update_traces(line=dict(color='red'))
   st.plotly_chart(fig, use_container_width=True, key=key)
