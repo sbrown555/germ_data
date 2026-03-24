@@ -164,6 +164,7 @@ last_processing_date = max(date_dict.keys())
 csv_id = date_dict[last_processing_date]['id']
 columns = ['minute', 'Chamber', 'actual_sp','Temp', 'RH', 'PAR', 'CO2']
 data_old = read_drive_id(csv_id, cols = columns)
+data_old['minute'] = pd.to_datetime(data_old['minute'])
 last_processing_time = data_old['minute'].max()
 
 # Looking through "Chamber Data folder and accessing new uploads since last process date
@@ -202,7 +203,8 @@ for date in sorted(file_dict.keys()):
   data_new = pd.concat([data_actual_new, data_sp_new])
   data_new = data_new[data_new['minute'] > last_processing_time]
   data_new.loc[data_new['Temp'] > 36, 'Temp'] /= 10
-  data = pd.concat([data_new, data])
+  data = pd.concat([data, data_new])
+  last_processing_time = data['minute'].max()
   # With data downloaded individually, the above cause some duplicate rows possibly, although it doesn't really make sense to me why
   # data.drop_duplicates(subset=['minute', 'Chamber', 'actual_sp', 'CO2'])
 
